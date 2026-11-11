@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Got a price quote from a Korean skin clinic? Upload a screenshot and check it against what Koreans pay and prices at home. Free, no sign-in; your image stays on your device.">
+<meta property="og:title" content="Seoul Quote Check">
+<meta property="og:description" content="Check a Korean skin-clinic price quote against what Koreans pay. Free, no sign-in.">
+<style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}</style>
+</head>
+<body>
+<title>Seoul Quote Check</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one reading column; the sample report is an annotated clinic quote with a price ruler, the page's signature element. */
+:root{
+  --paper:#F5F6F3; --sheet:#FFFFFF; --ink:#18212B; --muted:#5B6672; --line:#D9DED9;
+  --verify:#0E7A68; --verify-soft:#E2F2EE; --caution:#A8640F; --caution-soft:#FBF0DE; --alert:#B3261E; --alert-soft:#FBE7E5;
+  --band:#BFE3DA; --mark:#18212B;
+  --f-display:"IBM Plex Sans Condensed","Noto Sans JP","Noto Sans TC",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Noto Sans JP","Noto Sans TC",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11161B; --sheet:#182028; --ink:#E7ECEF; --muted:#9AA6B0; --line:#2C3740;
+  --verify:#4CC3AC; --verify-soft:#163A35; --caution:#E3A34A; --caution-soft:#3A2E19; --alert:#F08A80; --alert-soft:#3D2120;
+  --band:#24584F; --mark:#E7ECEF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11161B; --sheet:#182028; --ink:#E7ECEF; --muted:#9AA6B0; --line:#2C3740;
+  --verify:#4CC3AC; --verify-soft:#163A35; --caution:#E3A34A; --caution-soft:#3A2E19; --alert:#F08A80; --alert-soft:#3D2120;
+  --band:#24584F; --mark:#E7ECEF; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:880px;margin:0 auto;padding-block:20px 56px;display:flex;flex-direction:column;gap:48px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(30px,5.4vw,46px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(22px,3.4vw,28px);font-weight:600}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--verify)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--verify);outline-offset:2px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-num);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+.brand-mark{width:22px;height:22px;border:2px solid var(--verify);border-radius:4px;display:grid;place-items:center;color:var(--verify);font-size:13px;font-family:var(--f-num)}
+.langs{display:flex;gap:4px;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--sheet)}
+.langs button{border:0;background:none;padding:6px 12px;border-radius:999px;font-size:14px;min-height:36px}
+.langs button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:16px}
+.hero p.lead{font-size:18px;color:var(--muted);max-width:60ch}
+.promise{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.promise span{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--sheet)}
+
+/* paste box (example) */
+.paste{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.chat{font-family:var(--f-num);font-size:14px;background:var(--paper);border:1px dashed var(--line);border-radius:4px;padding:12px;white-space:pre-wrap;min-width:0;overflow-wrap:anywhere}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--sheet);border-radius:var(--r);padding:8px 12px;min-height:44px;text-align:left;display:flex;flex-direction:column;gap:0;line-height:1.3}
+.tabs button small{color:var(--muted);font-size:12px}
+.tabs button[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+
+/* report */
+.report{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.report-head{padding:16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.report-head .quote{font-family:var(--f-num);font-size:20px;font-weight:600}
+.sample-flag{font-size:12px;color:var(--caution);background:var(--caution-soft);border-radius:4px;padding:2px 8px}
+.verdict{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.verdict .dot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:8px}
+.verdict.ok .dot{background:var(--verify)} .verdict.warn .dot{background:var(--caution)} .verdict.alert .dot{background:var(--alert)}
+.verdict p{font-weight:500}
+
+/* ruler */
+.ruler{padding:16px;border-bottom:1px solid var(--line)}
+.ruler-track{position:relative;height:104px;margin:8px 0 4px}
+.ruler-axis{position:absolute;left:0;right:0;top:44px;height:1px;background:var(--line)}
+.ruler-band{position:absolute;top:34px;height:20px;background:var(--band);border-radius:3px}
+.ruler-band-label{position:absolute;top:58px;font-size:12px;color:var(--muted);white-space:nowrap;transform:translateX(-50%)}
+.ruler-mark{position:absolute;top:24px;width:2px;height:40px;background:var(--muted)}
+.ruler-mark.quote{background:var(--mark);width:3px;top:16px;height:48px}
+.ruler-mark-label{position:absolute;top:0;font-size:12px;white-space:nowrap;transform:translateX(-50%)}
+.ruler-mark-label.quote{font-weight:600}
+.ruler-mark-label.r0{top:66px}.ruler-mark-label.r1{top:80px}.ruler-mark-label.r2{top:2px}
+.ruler-keys{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:8px}
+.ruler-keys b{font-family:var(--f-num);font-weight:600;margin-right:4px}
+.ruler-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.ruler-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:10px}
+.ruler-legend b{color:var(--ink);font-weight:500}
+
+/* rows */
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .ic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-size:12px;font-weight:600}
+.row.ok .ic{background:var(--verify-soft);color:var(--verify)}
+.row.warn .ic{background:var(--caution-soft);color:var(--caution)}
+.row.alert .ic{background:var(--alert-soft);color:var(--alert)}
+.row.info .ic{background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+.row h3{margin-bottom:4px}
+.row p{color:var(--ink)}
+.row .src{font-size:13px;color:var(--muted);margin-top:6px}
+.row ul{margin:6px 0 0;padding-left:18px}
+.cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.qcard{border:1px solid var(--line);border-radius:4px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;background:var(--paper)}
+.qcard .ko{font-size:18px;font-weight:500;font-family:"Noto Sans KR",var(--f-body)}
+.qcard .tr{font-size:13px;color:var(--muted);grid-column:1}
+.qcard button{grid-row:1/span 2;grid-column:2;border:1px solid var(--line);background:var(--sheet);border-radius:4px;padding:6px 10px;font-size:13px;min-height:36px}
+
+/* free tools & pricing */
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.grid3{grid-template-columns:minmax(0,1fr)}}
+.tile{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.tile .tag{font-family:var(--f-num);font-size:12px;color:var(--verify)}
+.tile p{color:var(--muted);font-size:15px}
+.price{font-family:var(--f-num);font-size:28px;font-weight:600}
+.tile.main{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.never{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.never{grid-template-columns:minmax(0,1fr)}}
+.never div{border-top:2px solid var(--ink);padding-top:10px}
+.never p{color:var(--muted);font-size:15px}
+.cta{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.btn{border:0;background:var(--ink);color:var(--paper);border-radius:var(--r);padding:12px 20px;font-weight:600;min-height:48px}
+.notice{background:var(--verify-soft);border-radius:var(--r);padding:12px 14px;max-width:60ch}
+section{display:flex;flex-direction:column;gap:16px}
+section > p.sub{color:var(--muted);max-width:62ch}
+/* own-quote checker */
+.up{background:var(--sheet);border:1px solid var(--ink);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.drop{border:2px dashed var(--line);border-radius:var(--r);padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--muted);background:var(--paper)}
+.drop.over{border-color:var(--verify);background:var(--verify-soft)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.btn2{border:1px solid var(--ink);background:var(--sheet);border-radius:var(--r);padding:8px 14px;min-height:44px;font-weight:500}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.thumb{position:relative;border:1px solid var(--line);border-radius:4px;overflow:hidden;width:120px}
+.thumb img{display:block;width:120px;height:80px;object-fit:cover}
+.thumb button{position:absolute;top:4px;right:4px;border:0;background:var(--ink);color:var(--paper);border-radius:4px;font-size:12px;padding:2px 6px;min-height:28px}
+.up textarea{width:100%;min-height:72px;border:1px solid var(--line);border-radius:4px;padding:10px;font:inherit;font-size:14px;background:var(--paper);color:var(--ink);resize:vertical}
+.uprow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.status{font-size:14px;color:var(--muted)}
+.status.err{color:var(--alert)}
+.edit{margin-top:16px;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.edit h3{font-size:18px}
+.erow-top select,.erow select,.erow input{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:4px;padding:8px;background:var(--paper);color:var(--ink);min-height:40px;min-width:0}
+.erows{display:flex;flex-direction:column;gap:8px}
+.erow{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.8fr) minmax(0,1.3fr) minmax(0,1.8fr);gap:8px;padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+.erow.unc{border-color:var(--caution);background:var(--caution-soft)}
+.eg{display:flex;gap:6px;align-items:center;min-width:0}
+.eg>input,.eg>select{flex:1 1 0;width:100%}
+.eg.qty input{flex:0 1 70px}
+.eg.flags2{grid-column:1/-1;flex-wrap:wrap;gap:12px;font-size:14px}
+.eg.flags2 .del{margin-left:auto;min-height:36px;padding:4px 12px}
+.chk{display:flex;align-items:center;gap:4px}
+.uncm{color:var(--caution);font-weight:700}
+.facts dd.abroad{color:var(--muted);font-size:14px}
+@media (max-width:720px){.erow{grid-template-columns:minmax(0,1fr)}}
+.res{display:flex;flex-direction:column;gap:12px}
+.res-meta{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border-radius:999px;padding:3px 10px;background:var(--paper);border:1px solid var(--line)}
+.chip.warn{background:var(--caution-soft);border-color:transparent;color:var(--caution)}
+.item{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.item-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.item-head .nm{font-weight:600}
+.item-head .quote{font-family:var(--f-num);font-weight:600;font-size:18px}
+.item-head .orig{font-size:12px;color:var(--muted)}
+.facts{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;padding:12px 16px;font-size:15px}
+.facts dt{color:var(--muted)} .facts dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+@media (max-width:560px){.facts{grid-template-columns:minmax(0,1fr);gap:0 0}.facts dt{font-size:13px;margin-top:8px}.facts dd{text-align:left}}
+.flags{padding:0 16px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.flags p::before{content:"• ";color:var(--caution)}
+footer{border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:13px;color:var(--muted)}
+footer ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px}
+footer a{overflow-wrap:anywhere}
+@media (prefers-reduced-motion:no-preference){.report{transition:opacity .2s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">✓</span><span>Seoul Quote Check</span></div>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+      <button type="button" data-lang="zh" aria-pressed="false">繁中</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow" data-i18n="eyebrow"></p>
+    <h1 data-i18n="h1"></h1>
+    <p class="lead" data-i18n="lead"></p>
+    <div class="promise">
+      <span data-i18n="p1"></span><span data-i18n="p2"></span><span data-i18n="p3"></span>
+    </div>
+  </section>
+
+  <section aria-labelledby="upTitle">
+    <h2 id="upTitle" data-i18n="upTitle"></h2>
+    <p class="sub" data-i18n="upSub"></p>
+    <div class="up">
+      <label class="drop" id="drop" for="file">
+        <span data-i18n="drop"></span>
+        <span class="btn2" data-i18n="choose"></span>
+        <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+      </label>
+      <div class="thumbs" id="thumbs"></div>
+      <textarea id="qtext" data-i18n-ph="textPh"></textarea>
+      <div class="uprow">
+        <button type="button" class="btn" id="runBtn" data-i18n="run"></button>
+        <button type="button" class="btn2" id="stopBtn" hidden data-i18n="stop"></button>
+        <button type="button" class="btn2" id="sampleBtn" data-i18n="trySample"></button>
+        <span class="status" id="status" role="status"></span>
+      </div>
+    </div>
+    <div id="edit"></div>
+    <div class="res" id="res" aria-live="polite"></div>
+  </section>
+
+  <section aria-labelledby="sampleTitle">
+    <h2 id="sampleTitle" data-i18n="sampleTitle"></h2>
+    <p class="sub" data-i18n="sampleSub"></p>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="paste">
+      <span class="eyebrow" data-i18n="pasted"></span>
+      <div class="chat" id="chat"></div>
+    </div>
+    <article class="report" id="report" aria-live="polite"></article>
+  </section>
+
+  <section aria-labelledby="freeTitle">
+    <h2 id="freeTitle" data-i18n="freeTitle"></h2>
+    <div class="grid3">
+      <div class="tile"><span class="tag" data-i18n="free"></span><h3 data-i18n="t1"></h3><p data-i18n="t1d"></p></div>
+      <div class="tile"><span class="tag" data-i18n="free"></span><h3 data-i18n="t2"></h3><p data-i18n="t2d"></p></div>
+      <div class="tile"><span class="tag" data-i18n="free"></span><h3 data-i18n="t3"></h3><p data-i18n="t3d"></p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="priceTitle">
+    <h2 id="priceTitle" data-i18n="priceTitle"></h2>
+    <div class="grid3">
+      <div class="tile"><h3 data-i18n="pf"></h3><div class="price">$0</div><p data-i18n="pfd"></p></div>
+      <div class="tile main"><h3 data-i18n="pc"></h3><div class="price">$12</div><p data-i18n="pcd"></p></div>
+      <div class="tile"><h3 data-i18n="pr"></h3><div class="price">−20%</div><p data-i18n="prd"></p></div>
+    </div>
+    <div class="cta">
+      <button type="button" class="btn" id="ctaBtn" data-i18n="cta"></button>
+      <p class="notice" id="ctaNote" hidden data-i18n="ctaNote"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="neverTitle">
+    <h2 id="neverTitle" data-i18n="neverTitle"></h2>
+    <div class="never">
+      <div><h3 data-i18n="n1"></h3><p data-i18n="n1d"></p></div>
+      <div><h3 data-i18n="n2"></h3><p data-i18n="n2d"></p></div>
+      <div><h3 data-i18n="n3"></h3><p data-i18n="n3d"></p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="notice" id="privacyNote"></p>
+    <p data-i18n="disclaimer"></p>
+    <p data-i18n="fx"></p>
+    <p class="eyebrow" data-i18n="sourcesTitle"></p>
+    <ol>
+      <li><a href="https://gleneagles.hk/media/GAC-Aesthetic-Procedure-Price-List.pdf" target="_blank" rel="noopener">Gleneagles Hong Kong price list (Jan 2026)</a></li>
+      <li><a href="https://www.s-b-c.net/clinic/skin/price/" target="_blank" rel="noopener">SBC Shonan Beauty Clinic price list</a></li>
+      <li><a href="https://biancaclinic.jp/en/price/price-cat/dermatology/skin-boosting/" target="_blank" rel="noopener">BIANCA CLINIC Rejuran price</a></li>
+      <li><a href="https://unni.app/jp/events/157170" target="_blank" rel="noopener">NaA Clinic Tokyo, Ultherapy PRIME 300 (UNNI Japan)</a></li>
+      <li><a href="https://www.realself.com/nonsurgical/ultherapy/cost" target="_blank" rel="noopener">RealSelf Ultherapy cost</a> · <a href="https://www.realself.com/nonsurgical/thermage/cost" target="_blank" rel="noopener">RealSelf Thermage cost</a></li>
+      <li><a href="https://www.goyoung.com.hk/index.php/treatment/rejuran%20%E5%B0%8F%E9%BB%91%E7%9B%92" target="_blank" rel="noopener">Go Young Hong Kong, Rejuran Healer</a></li>
+      <li><a href="https://naissclinic.com/medical-aesthetic/post178_thermage-flx/" target="_blank" rel="noopener">Naiss Clinic Taiwan, Thermage FLX</a> · <a href="https://www.oganamagokworld.com/zh-TW/blog/hanguo-yinbo-lati-gonglue" target="_blank" rel="noopener">Ultherapy prices in Taiwan (written by a Seoul clinic)</a></li>
+      <li><a href="https://reberryclinic.com/?p=2580" target="_blank" rel="noopener">Seoul clinic Ultherapy PRIME price page</a> · <a href="https://creatrip.com/en/blog/14792" target="_blank" rel="noopener">Creatrip clinic guide (Rejuran prices)</a></li>
+      <li><a href="https://twig24.com/news/world/2026/03/31/20260331500147" target="_blank" rel="noopener">Share of skin clinics run by dermatologists (Mar 2026)</a> · <a href="https://www.dailypharm.com/user/news/336134" target="_blank" rel="noopener">Ultherapy PRIME NFC authenticity check (Mar 2026)</a></li>
+      <li><a href="https://unni.app/events?q=%EC%9A%B8%EC%8E%84%EB%9D%BC" target="_blank" rel="noopener">Gangnam Unni event prices in Korea (Ulthera, Thermage, Rejuran, botox, fillers and 25 more searches, 11 Nov 2026, VAT included)</a></li>
+      <li><a href="https://reberryclinic.com/?p=3990" target="_blank" rel="noopener">Seoul clinic price list (Ulthera, Thermage, InMode, Shurink, skin boosters)</a> · <a href="https://reberryclinic.com/?p=6234" target="_blank" rel="noopener">Incheon branch full fee table (26 Oct 2026)</a> · <a href="https://reberryclinic.com/?p=3175" target="_blank" rel="noopener">Sculptra</a> · <a href="https://reberryclinic.com/?p=2364" target="_blank" rel="noopener">skin botox</a> · <a href="https://reberryclinic.com/?p=3061" target="_blank" rel="noopener">Rejuran HB+</a> · <a href="https://reberryclinic.com/%EC%95%84%EC%9D%B4%EB%A6%AC%EC%A5%AC%EB%9E%80-%EB%AA%85%EB%8F%99/" target="_blank" rel="noopener">eye Rejuran</a></li>
+      <li><a href="https://www.whatclinic.com/beauty-clinics/south-korea/seoul/hongdae-toxnfill" target="_blank" rel="noopener">Seoul clinic price ranges for foreigners (moles, resurfacing, hair removal)</a> · <a href="https://pspskorea.com/en/pages/benefit.html" target="_blank" rel="noopener">Seoul clinic, thread lift and Re2O</a> · <a href="https://kclinicfinder.pages.dev/blog/korean-dermatology-cost" target="_blank" rel="noopener">English cost guide for foreigners (IPL, Profhilo estimates)</a></li>
+      <li><a href="https://blog.keybeauty.tw/aesthetic-price-guide-2026/" target="_blank" rel="noopener">Taiwan aesthetic price guide 2026 (Taipei ranges)</a></li>
+      <li><a href="https://m.baidu.com/bh/m/detail/ar_9910663222019508218" target="_blank" rel="noopener">Mainland China prices: IPL, pico, water injections (May 2026)</a> · <a href="https://k.sina.com.cn/article_7880068208_1d5b04c7006801z47k.html" target="_blank" rel="noopener">filler, botox, Thermage (Sep 2026)</a></li>
+      <li><a href="https://www.plasticsurgery.org/news/plastic-surgery-statistics" target="_blank" rel="noopener">US national averages (ASPS procedural statistics)</a></li>
+      <li><a href="https://www.job-post.co.kr/news/articleView.html?idxno=237429" target="_blank" rel="noopener">Exchange rates, 10 Nov 2026</a></li>
+    </ol>
+  </footer>
+</div>
+
+<script>
+const UI = {
+ en:{eyebrow:"For visitors getting skin treatments in Korea",
+  h1:"Got a quote from a Seoul skin clinic? See what it really is and what people actually pay.",
+  lead:"Paste the quote or event page you received. We tell you which device and generation it is, what is missing from the price, what Koreans paid for the same thing, and what it costs back home. Every number shows its source.",
+  p1:"No money from clinics",p2:"No rankings",p3:"Sources on every number",
+  sampleTitle:"Three example checks",sampleSub:"Clinics and quotes are made up for illustration. The prices they are checked against are real public data from November 2026. The home-price row follows your language: US for English, Japan for 日本語, Taiwan for 繁中.",
+  pasted:"What the visitor pasted",
+  freeTitle:"Free for everyone",free:"FREE",
+  t1:"Device decoder",t1d:"Ulthera or Ultherapy PRIME? Thermage CPT or FLX? Which Rejuran? Names hide different machines and products.",
+  t2:"Question card",t2d:"Korean sentences to show at the clinic, with your language underneath: VAT, who treats you, the sealed tip, shot count.",
+  t3:"Authenticity guide",t3d:"How to check the device and tip are genuine on the day, step by step.",
+  priceTitle:"Pricing",pf:"Free tools",pfd:"Decoder, question card and authenticity guide.",
+  pc:"Clinic check",pcd:"For the clinic in your quote: its own Korean-language event prices on the apps Koreans use, whether the doctor is a board-certified dermatologist, and its public sanction record. Reply within 24 hours.",
+  pr:"Share your receipt",prd:"After your treatment, upload your receipt and get 20% off your next check. Receipts become the price data other visitors rely on.",
+  cta:"Get the clinic check ($12)",ctaNote:"",
+  neverTitle:"What we never do",n1:"Take clinic money",n1d:"No commissions, ads or partner listings. You pay us, so the answer works for you.",
+  n2:"Rank or recommend clinics",n2d:"We show facts about the clinic you chose. Choosing stays with you.",
+  n3:"Book for you",n3d:"We do not arrange appointments or act as an agent.",
+  disclaimer:"General price and product information, not medical advice. Ask a doctor whether a treatment is right for you.",
+  fx:"Prices as of 11 Nov 2026. Rates: US$1 = ₩1,344.2, ¥100 = ₩850.76, HK$1 ≈ ₩172.3 (USD peg 7.8), NT$1 ≈ ₩48.1.",
+  sourcesTitle:"Sources",copy:"Copy",copied:"Copied",
+  rulerTitle:"Where this quote sits",band:"What Koreans paid",quoteMark:"This quote",
+  verdict:"Verdict"},
+ ja:{eyebrow:"韓国で美容皮膚科を受ける方へ",
+  h1:"ソウルの美容皮膚科から見積もりが来たら。中身と、みんなが実際に払った額を確認。",
+  lead:"届いた見積もりやイベントページを貼り付けてください。どの機器・どの世代か、価格に含まれていないもの、同じ施術に韓国人がいくら払ったか、日本ではいくらかをお伝えします。すべての数字に出典を付けます。",
+  p1:"クリニックからお金を受け取りません",p2:"ランキングなし",p3:"すべての数字に出典",
+  sampleTitle:"チェック結果の例（3件）",sampleSub:"クリニックと見積もりは説明用の架空のものです。比較に使う価格は2026年11月時点の実際の公開データです。「日本での価格」は表示言語に合わせて切り替わります。",
+  pasted:"利用者が貼り付けた内容",
+  freeTitle:"無料で使えるもの",free:"無料",
+  t1:"機器の見分け",t1d:"ウルセラか、ウルセラプライムか。サーマクールCPTかFLXか。どのリジュランか。同じ名前でも中身が違います。",
+  t2:"質問カード",t2d:"クリニックで見せる韓国語の文と日本語訳。付加価値税、誰が施術するか、未開封のチップ、ショット数。",
+  t3:"正規品の確認ガイド",t3d:"当日、機器とチップが正規品か確認する手順。",
+  priceTitle:"料金",pf:"無料ツール",pfd:"機器の見分け、質問カード、正規品ガイド。",
+  pc:"クリニックチェック",pcd:"見積もりのクリニックについて：韓国人が使うアプリでのそのクリニックの韓国語イベント価格、医師が皮膚科専門医か、公開されている行政処分歴。24時間以内に回答。",
+  pr:"領収書を共有",prd:"施術後に領収書をアップロードすると、次回のチェックが20%オフ。領収書はほかの利用者が頼る価格データになります。",
+  cta:"クリニックチェックを申し込む（$12）",ctaNote:"",
+  neverTitle:"私たちがしないこと",n1:"クリニックからの報酬",n1d:"手数料・広告・提携掲載はありません。料金はあなたからいただくので、答えはあなたのためのものです。",
+  n2:"ランキングや推薦",n2d:"あなたが選んだクリニックについての事実を示します。選ぶのはあなたです。",
+  n3:"予約代行",n3d:"予約の手配や仲介はしません。",
+  disclaimer:"価格と製品に関する一般的な情報であり、医療上の助言ではありません。施術が合うかどうかは医師にご相談ください。",
+  fx:"価格は2026年11月11日時点。レート：1米ドル＝1,344.2ウォン、100円＝850.76ウォン、1香港ドル≈172.3ウォン（米ドルペッグ7.8）、1台湾ドル≈48.1ウォン。",
+  sourcesTitle:"出典",copy:"コピー",copied:"コピーしました",
+  rulerTitle:"この見積もりの位置",band:"韓国人の支払額",quoteMark:"この見積もり",verdict:"判定"},
+ zh:{eyebrow:"給來韓國做醫美的你",
+  h1:"收到首爾皮膚科的報價了嗎？先看清楚它到底是什麼，大家實際付了多少。",
+  lead:"貼上你收到的報價或活動頁面。我們會告訴你這是哪台儀器、哪一代，價格裡少了什麼，韓國人做同一項目實際付多少，以及在台灣要多少錢。每個數字都附上出處。",
+  p1:"不收診所的錢",p2:"不做排名",p3:"每個數字都有出處",
+  sampleTitle:"三個檢查範例",sampleSub:"診所與報價為說明用的虛構內容；用來比對的價格是2026年11月的真實公開資料。「在台灣的價格」會依顯示語言切換。",
+  pasted:"使用者貼上的內容",
+  freeTitle:"免費工具",free:"免費",
+  t1:"儀器辨識",t1d:"是 Ulthera 還是 Ultherapy PRIME？熱瑪吉 CPT 還是 FLX？哪一款麗珠蘭？名稱相同，內容可能不同。",
+  t2:"問句卡",t2d:"在診所出示的韓文句子，附中文翻譯：是否含稅、誰來施打、未拆封的探頭、發數。",
+  t3:"正品確認指南",t3d:"當天確認儀器與探頭是否為正品的步驟。",
+  priceTitle:"價格",pf:"免費工具",pfd:"儀器辨識、問句卡、正品確認指南。",
+  pc:"診所檢查",pcd:"針對報價中的診所：它在韓國人常用App上的韓文活動價、醫師是否為皮膚科專科醫師、公開的行政處分紀錄。24小時內回覆。",
+  pr:"分享收據",prd:"療程後上傳收據，下次檢查享8折。收據會成為其他使用者依賴的價格資料。",
+  cta:"申請診所檢查（$12）",ctaNote:"",
+  neverTitle:"我們絕不做的事",n1:"收診所的錢",n1d:"沒有佣金、廣告或合作刊登。費用由你支付，答案只為你服務。",
+  n2:"排名或推薦診所",n2d:"我們只呈現你所選診所的事實，選擇權在你。",
+  n3:"代為預約",n3d:"我們不安排預約，也不當仲介。",
+  disclaimer:"本頁提供價格與產品的一般資訊，並非醫療建議。療程是否適合你，請諮詢醫師。",
+  fx:"價格為2026年11月11日資料。匯率：1美元＝1,344.2韓元、100日圓＝850.76韓元、1港幣≈172.3韓元（美元聯繫匯率7.8）、1新台幣≈48.1韓元。",
+  sourcesTitle:"資料來源",copy:"複製",copied:"已複製",
+  rulerTitle:"這份報價的位置",band:"韓國人實付",quoteMark:"這份報價",verdict:"判定"}
+};
+
+/* Question cards: Korean line + translations */
+const Q = {
+ vat:{ko:"부가세 포함 가격인가요?",en:"Is VAT included in this price?",ja:"付加価値税込みの価格ですか？",zh:"這個價格含稅嗎？"},
+ doc:{ko:"원장님이 직접 시술하시나요?",en:"Will the doctor perform the treatment personally?",ja:"院長先生が直接施術されますか？",zh:"是醫師本人親自施打嗎？"},
+ tip:{ko:"시술 전에 새 팁(정품)을 보여 주세요.",en:"Please show me the new, genuine tip before we start.",ja:"施術前に新しい正規品のチップを見せてください。",zh:"開始前請讓我看新的正品探頭。"},
+ shots:{ko:"사용한 샷 수를 기록해 주세요.",en:"Please write down the number of shots used.",ja:"使用したショット数を記録してください。",zh:"請記錄實際使用的發數。"},
+ cc:{ko:"몇 cc를 사용하나요? 제품 박스를 보여 주세요.",en:"How many cc will you use? Please show me the product box.",ja:"何ccを使いますか？製品の箱を見せてください。",zh:"會用幾cc？請讓我看產品盒。"},
+ extra:{ko:"마취비나 추가 비용이 있나요?",en:"Are there extra charges, such as numbing or sedation?",ja:"麻酔代などの追加費用はありますか？",zh:"有麻醉費或其他額外費用嗎？"},
+ receipt:{ko:"진료비 세부 영수증을 주세요.",en:"Please give me an itemized receipt.",ja:"明細付きの領収書をください。",zh:"請給我明細收據。"}
+};
+
+const SAMPLES = [
+{ id:"rejuran", lang:"en",
+  tab:{en:"Rejuran Healer 2cc",ja:"リジュランヒーラー 2cc",zh:"麗珠蘭 Healer 2cc"},
+  who:{en:"Quote by WhatsApp",ja:"WhatsAppで届いた見積もり",zh:"WhatsApp 收到的報價"},
+  chat:"[WhatsApp] Gangnam Clinic A\nHello! Rejuran Healer 2cc\nForeigner special price ₩250,000\nBook today and get free LED care 🙂",
+  quote:"₩250,000",
+  verdict:{cls:"warn",
+    en:"Above what Koreans report paying for 2cc, and VAT may be extra. Ask the two questions below before you book.",
+    ja:"韓国人が2ccに払ったと報告する額より高く、付加価値税が別の可能性があります。予約前に下の2つを確認しましょう。",
+    zh:"高於韓國人2cc的實付金額，而且可能未含稅。預約前先問下面兩個問題。"},
+  ruler:{min:0,max:600000,ticks:["₩0","₩200k","₩400k","₩600k"],
+    band:[100000,200000],
+    marks:[{v:250000,quote:true,l:"₩250k"},{v:275000,l:"+VAT ₩275k",flip:true},{v:517000,l:"HK ₩517k"},{v:237000,l:"JP 1cc ₩237k",flip:true}]},
+  legend:{en:"US: not offered as an injection (reported)",ja:"米国：注射としては未承認と報道",zh:"美國：據報導未核准為注射療程"},
+  rows:[
+   {k:"1",cls:"ok",
+    t:{en:"What it is",ja:"これは何か",zh:"這是什麼"},
+    b:{en:"Rejuran Healer, a polynucleotide (PN) skin booster. One box holds two 2cc syringes, so 2cc is one syringe. Rejuran HB, i and S are different products with different prices; make sure the quote says Healer.",
+       ja:"リジュランヒーラー。ポリヌクレオチド（PN）のスキンブースターです。1箱に2ccのシリンジが2本入っており、2ccはシリンジ1本分です。HB・i・Sは別製品で価格も違うので、見積もりがHealerか確認しましょう。",
+       zh:"麗珠蘭 Healer，屬於多核苷酸（PN）的肌膚增強注射。一盒有兩支2cc針筒，2cc即一支。HB、i、S是不同產品、價格也不同，請確認報價寫的是 Healer。"}},
+   {k:"2",cls:"warn",
+    t:{en:"Missing from the price",ja:"価格に含まれていないもの",zh:"價格漏列的部分"},
+    b:{en:"Most Seoul clinic prices exclude 10% VAT, which would make this ₩275,000 (about US$205). Numbing cream is sometimes charged separately. Tax refunds for foreigners on cosmetic treatments ended at the end of 2025.",
+       ja:"ソウルのクリニック価格は多くが10%の付加価値税別です。別なら₩275,000（約3万2,300円）。麻酔クリームが別料金のこともあります。外国人向けの美容施術の税還付は2025年末で終了しました。",
+       zh:"首爾診所價格多半未含10%稅，加上後為₩275,000（約NT$5,700）。麻醉藥膏有時另計。外國人醫美退稅已於2025年底結束。"}},
+   {k:"3",cls:"info",
+    t:{en:"Foreigner price check",ja:"外国人価格の確認",zh:"外國人價格確認"},
+    b:{en:"In a real check we compare this quote with the same clinic's Korean-language price page. This example clinic is made up, so we compare with the market instead.",
+       ja:"実際のチェックでは、同じクリニックの韓国語の価格ページと比べます。この例のクリニックは架空なので、相場と比べています。",
+       zh:"實際檢查時，我們會比對同一家診所的韓文價格頁。此範例診所為虛構，因此改與市場行情比較。"}},
+   {k:"4",cls:"warn",
+    t:{en:"What Koreans paid",ja:"韓国人の支払額",zh:"韓國人實付"},
+    b:{en:"Korean blog receipts for 2cc: about ₩100,000 to ₩200,000 (US$74 to 149). A booking platform lists ₩150,000 to ₩180,000 per session at high-volume clinics and ₩220,000 to ₩280,000 at one-doctor clinics.",
+       ja:"韓国のブログに載った2ccの支払額：約₩100,000〜200,000（約1万1,800〜2万3,500円）。予約プラットフォームでは、大型クリニックで1回₩150,000〜180,000、1対1型クリニックで₩220,000〜280,000。",
+       zh:"韓國部落格的2cc實付：約₩100,000至200,000（約NT$2,100至4,200）。訂位平台列出大型診所每次₩150,000至180,000，一對一診所₩220,000至280,000。"},
+    s:"Korean blogs via search results (36 posts, Nov 2026); Creatrip clinic guide (Mar 2026)"},
+   {k:"5",cls:"ok",
+    t:{en:"Price back home",ja:"日本での価格",zh:"在台灣的價格"},
+    b:{en:"US: Rejuran is reported as not approved as an injection, so there is no US price to compare. For reference, Hong Kong lists HK$3,000 for 2mL (about ₩517,000).",
+       ja:"日本：リジュランi 1ccが27,800円（約₩237,000）、2.7mLで80,900円の例。2ccの韓国相場の方が大幅に安いです。",
+       zh:"台灣：麗珠蘭療程約NT$6,000至20,000（約₩289,000至962,000，未註明cc數）。韓國2cc行情明顯較低。"},
+    s:"Go Young HK; SBC Japan; BIANCA Japan; Taiwan price summary"},
+   {k:"6",cls:"warn",
+    t:{en:"Package warning",ja:"前払いパッケージの注意",zh:"預付套餐提醒"},
+    b:{en:"Rejuran is often sold as a 3-session package. If you prepay, get the refund terms in writing. In 2026 Korea's Fair Trade Commission cited 15 skin and beauty clinics for unfair prepaid contracts (reported).",
+       ja:"リジュランは3回パッケージで売られることが多いです。前払いするなら返金条件を書面でもらいましょう。2026年、韓国公正取引委員会が美容系クリニック15院の不公正な前払い契約を指摘しました（報道）。",
+       zh:"麗珠蘭常以3次套餐販售。若要預付，請取得書面退款條件。2026年韓國公平交易委員會指出15家皮膚美容診所有不公平的預付合約（媒體報導）。"}},
+   {k:"7",cls:"info",
+    t:{en:"Is a dermatologist in charge?",ja:"皮膚科専門医か",zh:"是否為皮膚科專科醫師"},
+    b:{en:"Only board-certified dermatologists may name a clinic \"○○피부과의원\". About 10% of Korea's roughly 15,000 skin-treatment clinics are run by one. A name like \"○○의원\" or \"○○ Clinic\" with \"진료과목 피부과\" in small print means the doctor is not a dermatologist.",
+       ja:"「○○피부과의원」と名乗れるのは皮膚科専門医だけです。韓国の約1万5,000の肌治療クリニックのうち専門医の運営は約10%。「○○의원」や「○○クリニック」に小さく「진료과목 피부과」とあれば専門医ではありません。",
+       zh:"只有皮膚科專科醫師能將診所命名為「○○피부과의원」。韓國約1萬5千家皮膚診療診所中，專科醫師經營的約10%。若名稱是「○○의원」或「○○Clinic」，小字寫「진료과목 피부과」，則醫師不是皮膚科專科。"}},
+   {k:"Q",cls:"info",card:["vat","cc","extra","receipt"],
+    t:{en:"Show these at the clinic",ja:"クリニックで見せる文",zh:"在診所出示"},
+    b:{en:"",ja:"",zh:""}}
+  ]},
+{ id:"thermage", lang:"ja",
+  tab:{en:"Thermage FLX 600 shots",ja:"サーマクールFLX 600ショット",zh:"熱瑪吉 FLX 600發"},
+  who:{en:"Quote by LINE",ja:"LINEで届いた見積もり",zh:"LINE 收到的報價"},
+  chat:"[LINE] 江南クリニックB\nこんにちは！サーマクール600ショット\n₩1,500,000（全顔）\n今月のイベント価格です✨",
+  quote:"₩1,500,000",
+  verdict:{cls:"ok",
+    en:"Within what Koreans paid, if it is the FLX generation and VAT is included. Confirm both before you book.",
+    ja:"FLX世代で付加価値税込みなら、韓国人の支払額の範囲内です。予約前にこの2点を確認しましょう。",
+    zh:"若是FLX世代且含稅，就在韓國人實付範圍內。預約前請確認這兩點。"},
+  ruler:{min:0,max:4500000,ticks:["₩0","₩1.5M","₩3M","₩4.5M"],
+    band:[1200000,2420000],
+    marks:[{v:1500000,quote:true,l:"₩1.5M"},{v:1650000,l:"+VAT",flip:true},{v:1028000,l:"JP CPT ₩1.03M",flip:true},{v:4136000,l:"HK ₩4.14M"},{v:4285000,l:"US ₩4.29M",flip:true}]},
+  legend:{en:"JP figure is the older CPT generation",ja:"日本の数字は旧世代CPTです",zh:"日本數字為舊世代CPT"},
+  rows:[
+   {k:"1",cls:"warn",
+    t:{en:"What it is",ja:"これは何か",zh:"這是什麼"},
+    b:{en:"The quote says \"Thermage\" without a generation. FLX is the newer generation; CPT is older. Japanese clinic menus often list CPT, so a Japanese price and a Korean FLX price are not the same product. 600 shots is a common full-face amount.",
+       ja:"見積もりには「サーマクール」とだけあり、世代が書かれていません。FLXが新しい世代、CPTは旧世代です。日本のクリニックはCPTを載せていることが多く、日本の価格と韓国のFLX価格は同じ製品ではありません。600ショットは全顔でよく使われる量です。",
+       zh:"報價只寫「熱瑪吉」，沒寫世代。FLX是新世代，CPT是舊世代。日本診所常列CPT，所以日本價格和韓國FLX價格不是同一產品。600發是全臉常見的發數。"}},
+   {k:"2",cls:"warn",
+    t:{en:"Missing from the price",ja:"価格に含まれていないもの",zh:"價格漏列的部分"},
+    b:{en:"If VAT is extra, the price becomes ₩1,650,000 (about ¥193,900). Many clinics charge separately for sleep sedation; ask before the day.",
+       ja:"付加価値税が別なら₩1,650,000（約19万3,900円）になります。睡眠麻酔を別料金にするクリニックも多いので、当日までに確認しましょう。",
+       zh:"若未含稅，價格為₩1,650,000（約NT$34,300）。許多診所睡眠麻醉另計，請事先確認。"}},
+   {k:"3",cls:"info",
+    t:{en:"Foreigner price check",ja:"外国人価格の確認",zh:"外國人價格確認"},
+    b:{en:"In a real check we compare the quote with the clinic's Korean-language event page. Here the clinic is made up.",
+       ja:"実際のチェックでは、クリニックの韓国語イベントページと比べます。この例のクリニックは架空です。",
+       zh:"實際檢查時，我們會比對診所的韓文活動頁。此範例診所為虛構。"}},
+   {k:"4",cls:"ok",
+    t:{en:"What Koreans paid",ja:"韓国人の支払額",zh:"韓國人實付"},
+    b:{en:"Korean blog receipts for FLX 600 shots: about ₩1.6M to ₩2.0M (¥188,000 to ¥235,000), for example \"a little under ₩1.7M\". Event prices on Gangnam Unni, the app Koreans book with, run ₩1.2M to ₩2.4M including VAT (6 clinics, Nov 2026).",
+       ja:"韓国のブログに載ったFLX 600ショットの支払額：約₩160万〜200万（約18万8,000〜23万5,000円）。例：「170万ウォン弱」。韓国人が予約に使うアプリ「カンナムオンニ」のイベント価格は税込₩120万〜240万（6院、2026年11月）。",
+       zh:"韓國部落格的FLX 600發實付：約₩160萬至200萬（約NT$33,300至41,600），例如「不到170萬韓元」。韓國人預約用App「江南姐姐」的活動價含稅₩120萬至240萬（6家診所，2026年11月）。"},
+    s:"Korean blogs via search results (9 Thermage posts, Nov 2026)"},
+   {k:"5",cls:"ok",
+    t:{en:"Price back home",ja:"日本での価格",zh:"在台灣的價格"},
+    b:{en:"US: average US$3,188 (about ₩4.29M, 2024, generation not stated). Hong Kong: FLX 600 at HK$24,000 (about ₩4.14M).",
+       ja:"日本：大手クリニックのサーマクールCPT 600ショットが120,800円（約₩103万）。FLXではないので単純比較はできません。参考に香港のFLX 600は24,000香港ドル（約₩414万）。",
+       zh:"台灣：FLX 600發約NT$60,000至110,000（約₩289萬至529萬）。韓國價格明顯較低。"},
+    s:"SBC Japan; Naiss Clinic Taiwan; Gleneagles HK; RealSelf"},
+   {k:"6",cls:"info",
+    t:{en:"Package warning",ja:"前払いパッケージの注意",zh:"預付套餐提醒"},
+    b:{en:"Thermage is usually a single session. Be careful if the clinic adds prepaid add-ons; get refund terms in writing.",
+       ja:"サーマクールは通常1回の施術です。前払いの追加メニューを勧められたら、返金条件を書面でもらいましょう。",
+       zh:"熱瑪吉通常一次完成。若診所加售預付項目，請取得書面退款條件。"}},
+   {k:"8",cls:"info",
+    t:{en:"Genuine tip",ja:"正規品のチップ",zh:"正品探頭"},
+    b:{en:"Ask to see the new tip before treatment and to have the shot count written down. We have not yet confirmed an official way to verify Thermage tips yourself.",
+       ja:"施術前に新しいチップを見せてもらい、ショット数を記録してもらいましょう。サーマクールのチップを自分で確認する公式な方法は、まだ確認できていません。",
+       zh:"施打前請對方出示新探頭，並記錄發數。熱瑪吉探頭自行驗證的官方方法，我們尚未確認。"}},
+   {k:"Q",cls:"info",card:["vat","tip","shots","extra"],
+    t:{en:"Show these at the clinic",ja:"クリニックで見せる文",zh:"在診所出示"},b:{en:"",ja:"",zh:""}}
+  ]},
+{ id:"ulthera", lang:"zh",
+  tab:{en:"Ultherapy PRIME 300 shots",ja:"ウルセラプライム 300ショット",zh:"Ultherapy PRIME 300發"},
+  who:{en:"Quote by LINE, VAT extra",ja:"LINEで届いた見積もり（税別）",zh:"LINE 收到的報價（未稅）"},
+  chat:"[LINE] 江南診所C\n您好！Ultherapy PRIME 300發\n₩1,290,000（VAT另計）\n中文翻譯陪同 ✔",
+  quote:"₩1,290,000 + VAT",
+  verdict:{cls:"warn",
+    en:"Above what Koreans pay. With VAT it is ₩1,419,000; Seoul event prices for PRIME 300 shots run about ₩650,000 to ₩1,320,000 including VAT. It is close to a Korean-run clinic's price in Tokyo.",
+    ja:"韓国人の支払額より高めです。税込みで₩1,419,000。ソウルのプライム300ショットのイベント価格は税込で約₩65万〜132万です。東京の韓国系クリニックの価格とほぼ同じです。",
+    zh:"高於韓國人實付。含稅為₩1,419,000；首爾PRIME 300發活動價含稅約₩65萬至132萬。和東京韓系診所的價格相近。"},
+  ruler:{min:0,max:4500000,ticks:["₩0","₩1.5M","₩3M","₩4.5M"],
+    band:[650000,1320000],
+    marks:[{v:1419000,quote:true,l:"₩1.42M"},{v:890000,l:"Ulthera (old) ₩0.89M",flip:true},{v:1276000,l:"Tokyo ₩1.28M"},{v:3447000,l:"HK ₩3.45M",flip:true},{v:1683000,l:"TW low ₩1.68M",flip:true},{v:4327000,l:"TW high ₩4.33M"}]},
+  legend:{en:"Band: Seoul PRIME 300-shot event prices incl. VAT",ja:"帯：ソウルのプライム300ショットのイベント価格（税込）",zh:"色帶：首爾PRIME 300發活動價（含稅）"},
+  rows:[
+   {k:"1",cls:"ok",
+    t:{en:"What it is",ja:"これは何か",zh:"這是什麼"},
+    b:{en:"Ultherapy PRIME is the newer generation of Ulthera. Original Ulthera 300 shots starts around ₩890,000 in Seoul, so do not compare PRIME with an older-generation price.",
+       ja:"ウルセラプライムはウルセラの新世代です。ソウルでは旧型ウルセラ300ショットが約₩89万からなので、旧世代の価格と比べないようにしましょう。",
+       zh:"Ultherapy PRIME 是 Ulthera 的新世代。首爾舊款 Ulthera 300發約₩89萬起，不要拿舊世代價格來比。"}},
+   {k:"2",cls:"warn",
+    t:{en:"Missing from the price",ja:"価格に含まれていないもの",zh:"價格漏列的部分"},
+    b:{en:"VAT is listed as extra: ₩1,419,000 in total (about NT$29,500). Ask whether interpretation and numbing are included.",
+       ja:"付加価値税は別と明記されています。合計₩1,419,000（約16万6,800円）。通訳と麻酔が含まれるかも確認しましょう。",
+       zh:"報價已註明稅另計：合計₩1,419,000（約NT$29,500）。請確認翻譯陪同與麻醉是否包含。"}},
+   {k:"4",cls:"ok",
+    t:{en:"Seoul prices",ja:"ソウルの価格",zh:"首爾價格"},
+    b:{en:"On Gangnam Unni, the app Koreans book with, PRIME events cost about ₩183,000 to ₩440,000 per 100 shots including VAT (7 clinics, Nov 2026); 300 shots at two Seoul clinics were ₩550,000 and ₩647,000. A Gangnam clinic's own price page lists 300 shots from ₩1.29M plus VAT, so list prices sit well above event prices.",
+       ja:"韓国人が予約に使うアプリ「カンナムオンニ」では、プライムのイベント価格は100ショットあたり税込約₩18.3万〜44万（7院、2026年11月）。ソウルの2院では300ショットが₩55万と₩64.7万でした。江南のあるクリニックの価格ページは300ショット₩129万〜（税別）で、表示価格はイベント価格よりかなり高めです。",
+       zh:"在韓國人預約用的App「江南姐姐」上，PRIME活動價每100發含稅約₩18.3萬至44萬（7家診所，2026年11月）；首爾兩家診所300發為₩55萬與₩64.7萬。江南某診所官網標價300發₩129萬起（未稅），標價明顯高於活動價。"},
+    s:"Seoul clinic price pages (Nov 2026)"},
+   {k:"5",cls:"ok",
+    t:{en:"Price back home",ja:"日本での価格",zh:"在台灣的價格"},
+    b:{en:"US: average US$2,609 (about ₩3.51M, 2023, mostly older generation).",
+       ja:"日本：東京・新宿の韓国系クリニックでプライム300ショット150,000円（税込、約₩128万）。ソウルの税込価格とほぼ同じです。",
+       zh:"台灣：約500發 NT$35,000至90,000（約₩168萬至433萬）。此行情由首爾診所整理，請保留判斷。另參考：東京韓系診所PRIME 300發 ¥150,000（含稅，約₩128萬）。"},
+    s:"Taiwan summary by a Seoul clinic; NaA Clinic Tokyo; Gleneagles HK; RealSelf"},
+   {k:"8",cls:"ok",
+    t:{en:"Genuine device and tip",ja:"正規品の確認",zh:"正品確認"},
+    b:{en:"Since March 2026, Ultherapy PRIME devices carry an NFC chip. Tap your phone on the device, then scan the QR code on the transducer to check the tip is genuine. No app needed.",
+       ja:"2026年3月から、ウルセラプライムの機器にNFCチップが付いています。スマホを機器にかざし、トランスデューサーのQRコードを読み取るとチップが正規品か確認できます。アプリは不要です。",
+       zh:"自2026年3月起，Ultherapy PRIME 儀器內建NFC晶片。用手機感應儀器，再掃描探頭上的QR碼即可確認是否為正品，不需安裝App。"},
+    s:"Dailypharm, 3 Mar 2026"},
+   {k:"7",cls:"info",
+    t:{en:"Is a dermatologist in charge?",ja:"皮膚科専門医か",zh:"是否為皮膚科專科醫師"},
+    b:{en:"Look for \"피부과의원\" in the clinic's name. Ultherapy results depend on the doctor's skill more than a booster does.",
+       ja:"クリニック名に「피부과의원」があるか確認しましょう。ウルセラはスキンブースターより医師の技術で結果が変わります。",
+       zh:"看診所名稱是否有「피부과의원」。Ulthera 的效果比注射類更取決於醫師技術。"}},
+   {k:"Q",cls:"info",card:["vat","doc","tip","shots"],
+    t:{en:"Show these at the clinic",ja:"クリニックで見せる文",zh:"在診所出示"},b:{en:"",ja:"",zh:""}}
+  ]}
+];
+
+let lang = "en", current = 0;
+try{ const s=localStorage.getItem("sqc-lang"); if(s && UI[s]) lang=s; }catch(e){}
+
+const $ = s => document.querySelector(s);
+function el(tag, cls, text){ const n=document.createElement(tag); if(cls) n.className=cls; if(text!=null) n.textContent=text; return n; }
+
+function renderUI(){
+  document.documentElement.lang = lang==="zh" ? "zh-Hant-TW" : lang;
+  document.querySelectorAll("[data-i18n]").forEach(n=>{ const v=UI[lang][n.dataset.i18n]; if(v!=null) n.textContent=v; });
+  document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===lang));
+  renderTabs(); renderReport();
+}
+function renderTabs(){
+  const t=$("#tabs"); t.textContent="";
+  SAMPLES.forEach((s,i)=>{
+    const b=el("button"); b.type="button"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", i===current);
+    b.append(el("span",null,s.tab[lang]), el("small",null,s.who[lang]));
+    b.addEventListener("click",()=>{ current=i; renderTabs(); renderReport(); });
+    t.append(b);
+  });
+}
+function pct(v,r){ return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100)); }
+function renderReport(){
+  const s=SAMPLES[current], r=$("#report"); r.textContent="";
+  $("#chat").textContent=s.chat;
+  const head=el("div","report-head");
+  const left=el("div"); left.append(el("div","eyebrow",s.tab[lang]), el("div","quote",s.quote));
+  head.append(left, el("span","sample-flag", lang==="en"?"Example report":lang==="ja"?"サンプル結果":"範例結果"));
+  r.append(head);
+  const v=el("div","verdict "+s.verdict.cls); v.append(el("span","dot"), el("p",null,s.verdict[lang])); r.append(v);
+
+  const ru=el("div","ruler"); ru.append(el("div","eyebrow",UI[lang].rulerTitle));
+  const tr=el("div","ruler-track"); tr.append(el("div","ruler-axis"));
+  const b=el("div","ruler-band"); const a=pct(s.ruler.band[0],s.ruler), z=pct(s.ruler.band[1],s.ruler);
+  b.style.left=a+"%"; b.style.width=(z-a)+"%"; tr.append(b);
+  const others=s.ruler.marks.filter(m=>!m.quote).sort((x,y)=>x.v-y.v);
+  const keys=el("div","ruler-keys num");
+  s.ruler.marks.forEach(m=>{
+    const p=pct(m.v,s.ruler);
+    const mk=el("div","ruler-mark"+(m.quote?" quote":"")); mk.style.left="calc("+p+"% - 1px)"; tr.append(mk);
+    if(m.quote){
+      const lb=el("div","ruler-mark-label num quote", UI[lang].quoteMark+" "+m.l);
+      lb.style.left=Math.max(14,Math.min(86,p))+"%"; tr.append(lb);
+    }
+  });
+  others.forEach((m,i)=>{
+    const letter=String.fromCharCode(65+i), p=pct(m.v,s.ruler);
+    const lb=el("div","ruler-mark-label num r"+(i%2), letter);
+    lb.style.left=Math.max(3,Math.min(97,p))+"%"; tr.append(lb);
+    const k=el("span"); k.append(el("b",null,letter), document.createTextNode(m.l)); keys.append(k);
+  });
+  ru.append(tr);
+  const tk=el("div","ruler-ticks num"); s.ruler.ticks.forEach(x=>tk.append(el("span",null,x))); ru.append(tk);
+  const lg=el("div","ruler-legend");
+  const l1=el("span"); l1.append(el("b",null,"■ "), document.createTextNode(UI[lang].band));
+  lg.append(l1, el("span",null,s.legend[lang])); ru.append(keys, lg);
+  r.append(ru);
+
+  const rows=el("div","rows");
+  s.rows.forEach(row=>{
+    const rw=el("div","row "+row.cls); rw.append(el("span","ic",row.k));
+    const body=el("div"); body.style.minWidth="0"; body.append(el("h3",null,row.t[lang]));
+    if(row.b[lang]) body.append(el("p",null,row.b[lang]));
+    if(row.card){
+      const cards=el("div","cards");
+      row.card.forEach(key=>{
+        const q=Q[key], c=el("div","qcard");
+        const ko=el("span","ko",q.ko); ko.lang="ko";
+        const btn=el("button",null,UI[lang].copy); btn.type="button";
+        btn.addEventListener("click",()=>{
+          const done=()=>{ btn.textContent=UI[lang].copied; setTimeout(()=>btn.textContent=UI[lang].copy,1500); };
+          try{ navigator.clipboard.writeText(q.ko).then(done,()=>selectText(ko)); }catch(e){ selectText(ko); }
+        });
+        c.append(ko, btn, el("span","tr",q[lang])); cards.append(c);
+      });
+      body.append(cards);
+    }
+    if(row.s) body.append(el("p","src",(lang==="en"?"Source: ":lang==="ja"?"出典：":"來源：")+row.s));
+    rw.append(body); rows.append(rw);
+  });
+  r.append(rows);
+}
+function selectText(n){ const rg=document.createRange(); rg.selectNodeContents(n); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(rg); }
+
+document.querySelectorAll(".langs button").forEach(b=>b.addEventListener("click",()=>{
+  lang=b.dataset.lang; try{localStorage.setItem("sqc-lang",lang);}catch(e){} renderUI();
+}));
+$("#ctaBtn").addEventListener("click",()=>openDoor($("#ctaNote"),"price"));
+
+/* ---------- Own-quote checker (runs fully in the browser: OCR + parser + price data) ---------- */
+const UP = {
+ en:{upTitle:"Check your own quote",upSub:"Upload a screenshot of a price list, event banner or chat, or paste the text. The page reads it right here in your browser (nothing is uploaded, no sign-in), then checks each item against our price data for 34 common treatments.",
+  drop:"Drop or paste a screenshot here",choose:"Choose image",textPh:"Or paste the quote text here",run:"Check this quote",stop:"Stop",
+  loading:"Loading the text reader (first time only, about 10 MB)…",reading:"Reading the image…",
+  err:"Reading didn't finish. Try again, or crop the screenshot closer to the prices.",
+  errImg:"That file can't be read. Use a JPG, PNG or WebP screenshot.",
+  empty:"Add a screenshot or paste the text first.",none:"No treatment prices were found. Add them in the table below, or crop the screenshot closer.",
+  remove:"Remove",clinic:"Clinic",period:"Period",vatEx:"VAT (10%) not included",vatIn:"VAT included",vatUnk:"VAT not stated: ask",
+  listed:"Listed price",eff:"You would pay",minPay:"with the minimum",krRange:"Koreans pay (VAT incl.)",
+  noRef:"We don't have Korean price data for this treatment yet; use the prices abroad and the questions below.",below:"Below the usual Korean range. Read the conditions before you book.",
+  within:"Within the usual Korean range.",above:"Above the usual Korean range.",minq:"Minimum {n} required",tip:"Disposable tip not included",
+  origNote:"The struck-through 'original' price is set by the clinic, so the discount % says little.",event:"Event price: limited time or quantity",
+  notKRW:"Price is not in won; check the currency.",askTitle:"Questions to show at the clinic",read:"Check result",
+  perUnit:{cc:"per cc",vial:"per vial",s100:"per 100 shots",s600:"per 600 shots",tx:"per treatment",area:"per area",spot:"per spot",thread:"per thread"},
+  notSold:"not sold / no price",pkg:"Several treatments in one price. We can't compare a bundle per unit; ask for the price of each part.",
+  thisQuote:"This quote",
+  editTitle:"What the page read — fix anything wrong, then check again",editHint:"Lines marked ⚠ were hard to read. Compare them with your screenshot.",
+  colName:"Treatment as written",colCat:"Matched to",colQty:"Amount",colPrice:"Price (₩)",colOrig:"Original (₩)",colLim:"Limited",colTip:"Tip extra",
+  addRow:"Add a line",recheck:"Check again",vatLabel:"VAT",vatOpt:{excluded:"Not included",included:"Included",unknown:"Not stated"},
+  unitOpt:{"":"—",cc:"cc",shots:"shots",area:"area",session:"session",vial:"vial",units:"units",spot:"spot",thread:"thread"},
+  srcNote:"Price data as of 11 Nov 2026, converted at 10 Nov 2026 rates. Korean ranges are what people pay including VAT: the middle of event prices on Gangnam Unni, the app Koreans book with (first page of results, 11 Nov 2026), checked against clinic price pages. Prices abroad are each country's published clinic prices or averages."},
+ ja:{upTitle:"自分の見積もりをチェック",upSub:"料金表、イベントバナー、チャットのスクリーンショットをアップロードするか、文字を貼り付けてください。画像はこのブラウザの中で読み取ります（アップロードなし・ログイン不要）。そのあと主要34施術の価格データと照合します。",
+  drop:"ここにスクリーンショットをドロップ、または貼り付け",choose:"画像を選ぶ",textPh:"または見積もりの文字を貼り付け",run:"この見積もりをチェック",stop:"中止",
+  loading:"文字読み取り機能を準備中（初回のみ、約10MB）…",reading:"画像を読み取り中…",
+  err:"読み取りが完了しませんでした。もう一度、または価格部分を切り抜いてお試しください。",
+  errImg:"このファイルは読み取れません。JPG・PNG・WebPのスクリーンショットをお使いください。",
+  empty:"先にスクリーンショットを追加するか、文字を貼り付けてください。",none:"施術の価格が見つかりませんでした。下の表に入力するか、価格部分を切り抜いてお試しください。",
+  remove:"削除",clinic:"クリニック",period:"期間",vatEx:"付加価値税（10%）別",vatIn:"税込",vatUnk:"税込か不明：確認を",
+  listed:"表示価格",eff:"実際の支払額",minPay:"最低数量で",krRange:"韓国人の支払額（税込）",
+  noRef:"この施術の韓国の価格データはまだありません。海外の価格と下の質問をお使いください。",below:"韓国の通常の範囲より安いです。予約前に条件を確認しましょう。",
+  within:"韓国の通常の範囲内です。",above:"韓国の通常の範囲より高いです。",minq:"最低{n}から",tip:"使い捨てチップ代は別",
+  origNote:"取り消し線の「元の価格」はクリニックが決めたものなので、割引率はあまり参考になりません。",event:"イベント価格：期間・数量限定",
+  notKRW:"価格がウォンではありません。通貨を確認してください。",askTitle:"クリニックで見せる文",read:"チェック結果",
+  perUnit:{cc:"1ccあたり",vial:"1本あたり",s100:"100ショットあたり",s600:"600ショットあたり",tx:"1回あたり",area:"1部位あたり",spot:"1個あたり",thread:"糸1本あたり"},
+  notSold:"販売なし・価格なし",pkg:"複数の施術がひとつの価格になっています。セットは単位あたりで比べられないので、それぞれの価格を確認しましょう。",
+  thisQuote:"この見積もり",
+  editTitle:"読み取った内容 — 違うところを直して、もう一度チェック",editHint:"⚠ の行は読み取りにくかった箇所です。画像と見比べてください。",
+  colName:"表記どおりの施術名",colCat:"照合先",colQty:"量",colPrice:"価格（₩）",colOrig:"元の価格（₩）",colLim:"限定",colTip:"チップ別",
+  addRow:"行を追加",recheck:"もう一度チェック",vatLabel:"付加価値税",vatOpt:{excluded:"別",included:"込み",unknown:"記載なし"},
+  unitOpt:{"":"—",cc:"cc",shots:"ショット",area:"部位",session:"回",vial:"本(バイアル)",units:"単位",spot:"個",thread:"本(糸)"},
+  srcNote:"価格データは2026年11月11日時点、為替は2026年11月10日。韓国の相場は税込の支払額で、韓国人が予約に使うアプリ「カンナムオンニ」のイベント価格の中央部分（2026年11月11日、検索結果1ページ目）をクリニック価格ページと照合したものです。海外の価格は各国のクリニック公開価格または平均です。"},
+ zh:{upTitle:"檢查你的報價",upSub:"上傳價目表、活動橫幅或聊天截圖，或貼上文字。圖片就在你的瀏覽器裡讀取（不上傳、不用登入），再逐項與34種常見療程的價格資料比對。",
+  drop:"把截圖拖到這裡或直接貼上",choose:"選擇圖片",textPh:"或在這裡貼上報價文字",run:"檢查這份報價",stop:"停止",
+  loading:"正在載入文字辨識（僅第一次，約10MB）…",reading:"正在讀取圖片…",
+  err:"讀取未完成。請再試一次，或把截圖裁切到價格部分。",
+  errImg:"無法讀取這個檔案。請使用JPG、PNG或WebP截圖。",
+  empty:"請先加入截圖或貼上文字。",none:"沒有找到療程價格。請在下方表格輸入，或把截圖裁切到價格部分。",
+  remove:"移除",clinic:"診所",period:"期間",vatEx:"未含10%稅",vatIn:"含稅",vatUnk:"未標示是否含稅：請詢問",
+  listed:"標示價格",eff:"實際要付",minPay:"以最低數量計",krRange:"韓國人實付（含稅）",
+  noRef:"這個療程還沒有韓國價格資料；請參考海外價格與下方問題。",below:"低於韓國一般範圍。預約前請看清條件。",
+  within:"在韓國一般範圍內。",above:"高於韓國一般範圍。",minq:"最低{n}起",tip:"拋棄式探頭另計",
+  origNote:"劃掉的「原價」由診所自訂，折扣%參考價值不高。",event:"活動價：限時或限量",
+  notKRW:"價格不是韓元，請確認幣別。",askTitle:"在診所出示",read:"檢查結果",
+  perUnit:{cc:"每cc",vial:"每瓶",s100:"每100發",s600:"每600發",tx:"每次",area:"每部位",spot:"每顆",thread:"每條"},
+  notSold:"未販售／無價格",pkg:"多個療程合成一個價格，套組無法按單位比較；請詢問各項的價格。",
+  thisQuote:"這份報價",
+  editTitle:"讀到的內容 — 有錯就修改，再檢查一次",editHint:"標 ⚠ 的行不易辨識，請對照截圖。",
+  colName:"原文療程名",colCat:"比對項目",colQty:"數量",colPrice:"價格（₩）",colOrig:"原價（₩）",colLim:"限量",colTip:"探頭另計",
+  addRow:"新增一行",recheck:"再檢查一次",vatLabel:"稅",vatOpt:{excluded:"未含",included:"已含",unknown:"未標示"},
+  unitOpt:{"":"—",cc:"cc",shots:"發",area:"部位",session:"次",vial:"瓶",units:"單位",spot:"顆",thread:"條"},
+  srcNote:"價格資料截至2026年11月11日，匯率為2026年11月10日。韓國行情為含稅實付金額：取自韓國人預約用的App「江南姐姐」活動價的中間區段（2026年11月11日，搜尋結果第一頁），並與診所價目頁核對。海外價格為各國診所公開價格或平均值。"}
+};
+UP.en.krGuide="The Korean range for this one comes from an English guide for foreigners (estimates, often higher than what Koreans pay), not from Korean clinic price pages."; UP.ja.krGuide="この施術の韓国相場は外国人向け英語ガイドの推定値で（韓国人の支払額より高めのことが多い）、韓国のクリニック価格ページではありません。"; UP.zh.krGuide="此療程的韓國行情來自給外國人的英文指南估計（常高於韓國人實付），不是韓國診所價目頁。";
+UP.en.trySample="Try with an example image"; UP.ja.trySample="例の画像で試す"; UP.zh.trySample="用範例圖片試試";
+for (const l in UP) Object.assign(UI[l], UP[l]);
+UP.en.unc="Some text was hard to read; check this line against the image."; UP.ja.unc="読み取りにくい箇所があります。画像と照らし合わせてください。"; UP.zh.unc="部分文字不易辨識，請對照圖片確認。";
+for (const l in UP) UI[l].unc=UP[l].unc;
+
+Q.brand={ko:"어떤 보톡스 제품인가요? 국산인가요, 수입인가요?",en:"Which toxin brand is it? Korean-made or imported?",ja:"どのボトックス製剤ですか？韓国製ですか、輸入品ですか？",zh:"是哪個肉毒品牌？國產還是進口？"};
+Q.min={ko:"최소 몇 cc(샷)부터 이 가격인가요?",en:"What is the minimum amount for this price?",ja:"この価格は最低何cc（ショット）からですか？",zh:"這個價格最少要幾cc（發）？"};
+Q.gen={ko:"써마지 FLX인가요, CPT인가요?",en:"Is it Thermage FLX or the older CPT?",ja:"サーマクールFLXですか、CPTですか？",zh:"是熱瑪吉FLX還是舊款CPT？"};
+Q.units={ko:"몇 유닛(단위) 들어가나요?",en:"How many units will you use?",ja:"何単位使いますか？",zh:"會打幾單位？"};
+Q.split={ko:"패키지 안의 각 시술 가격을 따로 알려주세요.",en:"Please tell me the price of each treatment in this package.",ja:"セットの中の各施術の価格を教えてください。",zh:"請告訴我套組中每一項的價格。"};
+Q.product={ko:"어떤 제품(브랜드)을 쓰나요? 정품 확인 가능한가요?",en:"Which product brand do you use? Can I see it is genuine?",ja:"どの製品（ブランド）ですか？正規品か確認できますか？",zh:"用哪個品牌？可以確認是正品嗎？"};
+Q.count={ko:"실은 몇 줄 들어가나요?",en:"How many threads are included?",ja:"糸は何本入りますか？",zh:"包含幾條線？"};
+Q.area={ko:"이 가격은 어느 부위, 몇 회 기준인가요?",en:"Which area and how many sessions is this price for?",ja:"この価格はどの部位・何回分ですか？",zh:"這個價格是哪個部位、幾次？"};
+
+/* Exchange rates, 10 Nov 2026 (KEB Hana; TWD from a clinic-stated rate, HKD by the 7.8 peg). KRW per 1 unit. */
+const FX = {KRW:1, USD:1344.2, JPY:8.5076, CNY:201.58, HKD:172.3, TWD:48.1};
+const CUR_SIGN = {USD:"US$", JPY:"¥", CNY:"CN¥", HKD:"HK$", TWD:"NT$"};
+const NOTE = {
+ avg:{en:"national average, per treatment",ja:"全国平均・1回",zh:"全國平均、每次"},
+ full:{en:"full treatment, not per unit",ja:"全体1回（単位あたりではない）",zh:"整體一次，非單位價"},
+ u10:{en:"assumes 10 units",ja:"10単位として計算",zh:"以10單位計"},
+ u40:{en:"40 units",ja:"40単位",zh:"40單位"},
+ u50:{en:"assumes 50 units",ja:"50単位として計算",zh:"以50單位計"},
+ u100:{en:"assumes 100 units",ja:"100単位として計算",zh:"以100單位計"},
+ upper:{en:"whole upper face",ja:"上顔全体",zh:"整個上臉"},
+ sess:{en:"per session, amount not stated",ja:"1回・量の記載なし",zh:"每次，未註明用量"},
+ syr:{en:"per syringe (about 1 ml)",ja:"1本（約1ml）",zh:"每支（約1ml）"},
+ avgsyr:{en:"national average per syringe",ja:"全国平均・1本",zh:"全國平均、每支"},
+ gen:{en:"generation not stated",ja:"世代の記載なし",zh:"未註明世代"},
+ cpt:{en:"older CPT generation, not comparable",ja:"旧型CPT・比較不可",zh:"舊款CPT，不可直接比較"},
+ facneck:{en:"face + neck, shots not stated",ja:"顔＋首・ショット数記載なし",zh:"臉＋頸，未註明發數"},
+ diff:{en:"different device, not directly comparable",ja:"別の機器・直接比較不可",zh:"不同機型，不可直接比較"},
+ fullhifu:{en:"full face, HIFU in general",ja:"全顔・HIFU全般",zh:"全臉，一般HIFU"},
+ local:{en:"small area only",ja:"部分のみ",zh:"僅局部"},
+ areas:{en:"per area, depends on body part",ja:"部位による",zh:"依部位而定"},
+ per3:{en:"up to 3 spots, per spot",ja:"3個まで・1個あたり",zh:"3顆內，每顆"},
+ thr:{en:"2 to 4 threads",ja:"糸2〜4本",zh:"2至4條線"},
+ percc:{en:"per cc",ja:"1ccあたり",zh:"每cc"},
+ nonha:{en:"national average, non-HA filler",ja:"全国平均・非ヒアルロン酸",zh:"全國平均、非玻尿酸"},
+ promo:{en:"promotion to list price",ja:"キャンペーン〜定価",zh:"促銷價至牌價"},
+ face:{en:"full face",ja:"全顔",zh:"全臉"}
+};
+const COUNTRY = {
+ us:{en:"United States",ja:"アメリカ",zh:"美國"}, jp:{en:"Japan",ja:"日本",zh:"日本"}, tw:{en:"Taiwan",ja:"台湾",zh:"台灣"},
+ hk:{en:"Hong Kong",ja:"香港",zh:"香港"}, cn:{en:"Mainland China",ja:"中国本土",zh:"中國大陸"}
+};
+const C_ORDER = {en:["us","jp","tw","hk","cn"], ja:["jp","us","tw","hk","cn"], zh:["tw","hk","cn","jp","us"]};
+
+/* Reference catalog. kr: KRW per norm unit (VAT mostly excluded). Abroad: [low, high] in local currency per norm unit unless a note says otherwise.
+   a: name patterns (checked in order; first match wins). Sources listed in the footer. */
+const T = (en,ja,zh)=>({en,ja,zh});
+const REF = {
+ rejuran_eye:{norm:"cc",kr:[108900,165000],ab:{jp:{v:[27800],c:"JPY"}},
+  n:T("Rejuran i (eye)","リジュランi（目元）","麗珠蘭 i（眼周）"),
+  w:T("Rejuran for the eye area. A different product from Healer, so prices differ.","目元用リジュラン。ヒーラーとは別製品で価格も違います。","眼周用麗珠蘭，與Healer是不同產品，價格也不同。"),q:["cc"],
+  a:/(eye|아이|目元|眼).{0,8}(rejuran|리쥬란|リジュラン|麗珠蘭|丽珠兰)|(rejuran|리쥬란|リジュラン|麗珠蘭|丽珠兰)\s*(i\b|아이|eye)/i},
+ rejuran_hb:{norm:"cc",kr:[219000,275000],ab:{jp:{v:[29800],c:"JPY"}},
+  n:T("Rejuran HB","リジュランHB","麗珠蘭 HB"),
+  w:T("Rejuran HB contains lidocaine for less pain. A different product and price from Healer.","リジュランHBは痛みを抑えるリドカイン入り。ヒーラーとは別製品・別価格です。","Rejuran HB含利多卡因、較不痛，與Healer是不同產品與價格。"),q:["cc"],
+  a:/(rejuran|리쥬란|リジュラン|麗珠蘭|丽珠兰).{0,6}hb/i},
+ rejuran_healer:{norm:"cc",kr:[76000,121000],ab:{jp:{v:[29800,30000],c:"JPY"},hk:{v:[1500],c:"HKD"},tw:{v:[6000,20000],c:"TWD",nt:"sess"}},
+  n:T("Rejuran Healer","リジュランヒーラー","麗珠蘭 Healer"),
+  w:T("Rejuran Healer, a polynucleotide (PN) skin booster from Korea. Priced per cc; one syringe is 2 cc. Not approved in the US.","リジュランヒーラー（韓国製PNスキンブースター）。cc単位の価格で、1本2cc。米国では未承認。","麗珠蘭Healer（韓國PN肌膚增強注射），以cc計價，一支2cc。美國未核准。"),q:["cc"],
+  a:/rejuran|리쥬란|リジュラン|麗珠蘭|丽珠兰/i},
+ ultherapy_prime:{norm:"s100",kr:[215000,440000],ab:{jp:{v:[50000],c:"JPY"},tw:{v:[7000,18000],c:"TWD"},hk:{v:[5000],c:"HKD"},us:{v:[2609],c:"USD",nt:"full"}},
+  n:T("Ultherapy PRIME","ウルセラプライム","Ultherapy PRIME 音波"),
+  w:T("Ultherapy PRIME, the newer Ulthera generation. Compare per 100 shots; a full face is often 300 to 400. Since March 2026 the tip can be checked as genuine by NFC.","ウルセラプライム（新世代）。100ショットあたりで比較。全顔は300〜400が多い。2026年3月からチップの正規品をNFCで確認できます。","Ultherapy PRIME（新世代）。以每100發比較，全臉常見300至400發。2026年3月起可用NFC確認探頭為正品。"),q:["tip","shots","doc"],
+  a:/(ulthera|ultherapy|울쎄라|ウルセラ|音波).{0,6}(prime|프라임|プライム)|(prime|프라임|プライム)\s*[0-9]{2,4}\s*(샷|shots?|ショット|發)/i},
+ ulthera:{norm:"s100",kr:[200000,384000],ab:{jp:{v:[38000,50000],c:"JPY"},us:{v:[2609],c:"USD",nt:"full"}},
+  n:T("Ulthera (original)","ウルセラ（旧型）","Ulthera（舊款）"),
+  w:T("Original Ulthera. Don't compare it with PRIME prices; ask which one it is.","旧型ウルセラ。プライムの価格とは比べないでください。どちらか確認を。","舊款Ulthera，不要和PRIME價格比較；請確認是哪一款。"),q:["tip","shots"],
+  a:/ulthera|ultherapy|울쎄라|ウルセラ|極線音波/i},
+ thermage_flx:{norm:"s600",kr:[1200000,2420000],ab:{us:{v:[3188],c:"USD",nt:"gen"},tw:{v:[60000,120000],c:"TWD",nt:"face"},hk:{v:[24000],c:"HKD"},cn:{v:[9800,19800],c:"CNY",nt:"facneck"},jp:{v:[120800],c:"JPY",nt:"cpt"}},
+  n:T("Thermage FLX","サーマクールFLX","熱瑪吉 FLX"),
+  w:T("Thermage FLX, the newer generation. 600 shots is a common full-face amount.","サーマクールFLX（新世代）。全顔は600ショットが一般的です。","熱瑪吉FLX（新世代），全臉常見600發。"),q:["tip","shots","doc"],
+  a:/(thermage|써마지|サーマクール|熱瑪吉|热玛吉).{0,6}flx/i},
+ thermage_unknown:{norm:"s600",kr:[1200000,2420000],ab:{us:{v:[3188],c:"USD",nt:"gen"},tw:{v:[60000,120000],c:"TWD",nt:"face"},hk:{v:[24000],c:"HKD"},cn:{v:[9800,19800],c:"CNY",nt:"facneck"},jp:{v:[120800],c:"JPY",nt:"cpt"}},
+  n:T("Thermage (generation not stated)","サーマクール（世代不明）","熱瑪吉（未標示世代）"),
+  w:T("Thermage without a generation. Ask whether it is FLX or the older CPT; the Korean range is for FLX.","世代の記載がないサーマクール。FLXか旧型CPTか確認を。韓国相場はFLXのものです。","未標示世代的熱瑪吉。請確認是FLX還是舊款CPT；韓國行情為FLX。"),q:["gen","tip","shots"],
+  a:/thermage|써마지|サーマクール|熱瑪吉|热玛吉|電波拉皮/i},
+ shurink:{norm:"s100",kr:[25000,55000],ab:{jp:{v:[4738],c:"JPY",nt:"diff"},tw:{v:[25000,60000],c:"TWD",nt:"fullhifu"},cn:{v:[6800,12800],c:"CNY",nt:"diff"}},
+  n:T("Shurink (HIFU)","シュリンク（HIFU）","舒提美（Shurink HIFU）"),
+  w:T("Shurink, a Korean HIFU lifting device. Cheaper than Ulthera; compare per 100 shots.","韓国製HIFUリフト機器シュリンク。ウルセラより安価。100ショットあたりで比較。","韓國HIFU拉提機Shurink，比Ulthera便宜，以每100發比較。"),q:["shots","tip"],
+  a:/shurink|슈링크|シュリンク|舒提美/i},
+ oligio:{norm:"s100",kr:[99000,183000],ab:{},
+  n:T("Oligio (RF)","オリジオ（RF）","Oligio 電波"),
+  w:T("Oligio, a Korean radio-frequency (RF) tightening device often called a 'Korean Thermage'.","韓国製RF（高周波）機器オリジオ。「韓国版サーマクール」と呼ばれます。","韓國電波緊緻機Oligio，常被稱為「韓版熱瑪吉」。"),q:["shots","tip"],
+  a:/oligio|올리지오|オリジオ/i},
+ sofwave:{norm:"s100",kr:[1089000,1375000],ab:{},
+  n:T("Sofwave","ソフウェーブ","Sofwave 索夫波"),
+  w:T("Sofwave, an ultrasound lifting device. Priced per 100 shots.","超音波リフト機器ソフウェーブ。100ショットあたりの価格。","超音波拉提機Sofwave，以每100發計價。"),q:["shots"],
+  a:/sofwave|소프웨이브|ソフウェーブ/i},
+ inmode:{norm:"tx",kr:[39000,239000],ab:{},
+  n:T("InMode (FX / Forma)","インモード","InMode 音模"),
+  w:T("InMode, an RF device for contouring and tightening. Price depends on area (one area vs full face).","輪郭・引き締め用RF機器インモード。部位（1部位か全顔か）で価格が変わります。","InMode電波輪廓緊緻，價格依部位（單一部位或全臉）而定。"),q:["area"],
+  a:/inmode|인모드|インモード/i},
+ onda:{norm:"tx",kr:[219000,880000],ab:{},
+  n:T("Onda","オンダ","Onda 微波"),
+  w:T("Onda, a microwave device for fat and tightening. Priced by energy (kJ).","マイクロ波機器オンダ。エネルギー量（kJ）で価格が変わります。","Onda微波溶脂緊緻，依能量（kJ）計價。"),q:["area"],
+  a:/\bonda\b|온다|オンダ/i},
+ potenza:{norm:"tx",kr:[109000,660000],ab:{},
+  n:T("Potenza (RF microneedling)","ポテンツァ","Potenza 黃金微針"),
+  w:T("Potenza, RF microneedling for pores, scars and texture.","毛穴・傷跡・肌質用のRFマイクロニードル、ポテンツァ。","Potenza電波微針，用於毛孔、疤痕與膚質。"),q:["shots","tip"],
+  a:/potenza|포텐자|ポテンツァ/i},
+ botox_masseter:{norm:"tx",kr:[19700,86000],ab:{jp:{v:[8800,18000],c:"JPY",nt:"u40"},tw:{v:[5000,17500],c:"TWD",nt:"u50"},hk:{v:[6600],c:"HKD"},cn:{v:[780,3500],c:"CNY",nt:"sess"},us:{v:[600,1800],c:"USD"}},
+  n:T("Botox, jaw (masseter)","エラボトックス","咬肌肉毒（瘦臉）"),
+  w:T("Jaw (masseter) botox. Korean-made toxins cost much less than imported Allergan; ask which brand and how many units.","エラボトックス。韓国製は輸入品（アラガン）よりずっと安い。製剤と単位数を確認しましょう。","咬肌肉毒。國產比進口（Allergan）便宜很多，請確認品牌與單位數。"),q:["brand","units"],
+  a:/(botox|toxin|보톡스|보톡|ボトックス|肉毒|瘦臉針|瘦脸针).{0,12}(jaw|masseter|사각턱|턱|エラ|咬肌|square)|(jaw|masseter|사각턱|エラ|咬肌).{0,12}(botox|보톡스|ボトックス|肉毒)|瘦臉針|瘦脸针/i},
+ skin_botox:{norm:"area",kr:[35000,65000],ab:{},
+  n:T("Skin botox (micro-botox)","スキンボトックス","微滴肉毒（水光肉毒）"),
+  w:T("Skin botox: diluted toxin injected shallowly for pores and oil.","スキンボトックス：薄めた製剤を浅く注入し、毛穴・皮脂に。","微滴肉毒：稀釋後淺層注射，改善毛孔與出油。"),q:["brand"],
+  a:/skin\s*botox|스킨\s*보톡스|スキンボトックス|微滴|水光肉毒|micro.?botox/i},
+ botox_area:{norm:"area",kr:[8700,132000],ab:{jp:{v:[3500,8000],c:"JPY"},tw:{v:[1000,3500],c:"TWD",nt:"u10"},hk:{v:[3300],c:"HKD",nt:"upper"},cn:{v:[780,3500],c:"CNY",nt:"sess"},us:{v:[435],c:"USD",nt:"avg"}},
+  n:T("Botox, wrinkles (per area)","ボトックス（シワ1部位）","除皺肉毒（每部位）"),
+  w:T("Wrinkle botox for one area (forehead, frown, crow's feet). Korean-made from about ₩9,900; imported (Allergan) up to about ₩120,000.","シワ用ボトックス1部位（額・眉間・目尻）。韓国製は約₩9,900から、輸入品（アラガン）は約₩120,000まで。","除皺肉毒一部位（抬頭紋、眉間、魚尾紋）。國產約₩9,900起，進口（Allergan）約₩120,000。"),q:["brand"],
+  a:/botox|toxin|보톡스|보톡|ボトックス|肉毒|botulinum|xeomin|dysport|nabota|나보타|botulax|보툴렉스|코어톡스|coretox/i},
+ sculptra:{norm:"vial",kr:[649000,1089000],ab:{cn:{v:[4999,18800],c:"CNY",nt:"promo"},us:{v:[901],c:"USD",nt:"nonha"}},
+  n:T("Sculptra (PLLA)","スカルプトラ","舒顏萃 Sculptra（童顏針）"),
+  w:T("Sculptra, a poly-L-lactic acid collagen stimulator. Priced per vial; results build over months.","ポリ乳酸のコラーゲン生成剤スカルプトラ。1本（バイアル）単位。効果は数か月かけて出ます。","聚左旋乳酸膠原增生劑舒顏萃，以瓶計價，效果需數月逐漸出現。"),q:["product"],
+  a:/sculptra|스컬트라|スカルプトラ|舒顏萃|舒颜萃|童顏針|童颜针/i},
+ juvelook:{norm:"cc",kr:[55000,110000],ab:{},
+  n:T("Juvelook","ジュベルック","Juvelook 喬薇露"),
+  w:T("Juvelook, a Korean PDLLA collagen booster. Mostly not sold abroad.","韓国製PDLLAコラーゲンブースター、ジュベルック。海外ではほぼ未販売。","韓國PDLLA膠原增生注射Juvelook，海外大多未販售。"),q:["cc","product"],
+  a:/juvelook|쥬베룩|ジュベルック/i},
+ re2o:{norm:"tx",kr:[299000,660000],ab:{},
+  n:T("Elravie Re2O","エルラビ リツーオー","Elravie Re2O"),
+  w:T("Re2O, an ECM (collagen/elastin) skin booster. Priced per vial.","ECM（コラーゲン・エラスチン）スキンブースター、リツーオー。1本単位。","ECM（膠原/彈力蛋白）肌膚增強注射Re2O，以瓶計價。"),q:["product"],
+  a:/re\s*2\s*o|re20|리투오|リツーオー/i},
+ profhilo:{norm:"tx",kr:[337500,675000],krg:true,ab:{jp:{v:[47000],c:"JPY"},hk:{v:[4100],c:"HKD"}},
+  n:T("Profhilo (2 ml)","プロファイロ（2ml）","Profhilo 2ml"),
+  w:T("Profhilo, a high-concentration HA skin booster, one 2 ml syringe.","高濃度ヒアルロン酸スキンブースター、プロファイロ（2ml）。","高濃度玻尿酸肌膚增強Profhilo，一支2ml。"),q:["product"],
+  a:/profhilo|프로파일로|プロファイロ/i},
+ skinvive:{norm:"tx",kr:[209000,990000],ab:{hk:{v:[4100],c:"HKD"}},
+  n:T("SkinVive (2 ml)","スキンバイブ（2ml）","SkinVive 2ml"),
+  w:T("SkinVive by Juvederm, an HA skin booster.","ジュビダームのスキンブースター、スキンバイブ。","喬雅登的玻尿酸肌膚增強SkinVive。"),q:["product"],
+  a:/skin\s*vive|스킨바이브|スキンバイブ|喬雅登水光/i},
+ skinbooster:{norm:"tx",kr:[65000,198000],ab:{tw:{v:[5000,15000],c:"TWD"},cn:{v:[800,3500],c:"CNY"}},
+  n:T("Skin booster / water glow injection","水光注射","水光針"),
+  w:T("Water-glow (물광) injections: HA skin boosters given with a needle or injector gun. Price depends on the product and amount.","水光注射：ヒアルロン酸を注射器や機械で入れます。製品と量で価格が変わります。","水光針：以針或水光槍注射玻尿酸，價格依產品與用量而定。"),q:["product","cc"],
+  a:/물광|수광|water\s*glow|aqua\s*shine|skin\s*booster|스킨부스터|水光|엑소좀|exosome|エクソソーム|外泌體|外泌体/i},
+ filler:{norm:"cc",kr:[66000,550000],ab:{jp:{v:[34800,57200],c:"JPY"},tw:{v:[10000,30000],c:"TWD"},cn:{v:[1800,12800],c:"CNY",nt:"syr"},us:{v:[715],c:"USD",nt:"avgsyr"}},
+  n:T("HA filler (per cc)","ヒアルロン酸フィラー（1cc）","玻尿酸（每cc）"),
+  w:T("Hyaluronic acid filler. Korean-made from about ₩120,000 per cc; imported (Juvederm, Restylane) up to about ₩500,000.","ヒアルロン酸フィラー。韓国製は1cc約₩120,000から、輸入品（ジュビダーム等）は約₩500,000まで。","玻尿酸填充。國產每cc約₩120,000起，進口（喬雅登、瑞絲朗）約₩500,000。"),q:["product","cc"],
+  a:/filler|필러|フィラー|ヒアルロン|玻尿酸|juvederm|쥬비덤|ジュビダーム|喬雅登|restylane|레스틸렌|ytt|volux|voluma|volbella|vista|이브아르|yvoire|뉴라미스|neuramis|벨로테로|belotero|\brha\b/i},
+ pico_spot:{norm:"tx",kr:[605000,605000],ab:{jp:{v:[49800],c:"JPY",nt:"face"},cn:{v:[1500,2500],c:"CNY",nt:"local"}},
+  n:T("Pico laser for spots (full face)","ピコスポット（全顔）","皮秒除斑（全臉）"),
+  w:T("Pico laser aimed at individual spots and freckles, not the gentle toning pass.","シミ・そばかすを1つずつ狙うピコレーザー（トーニングとは別）。","針對單顆斑點的皮秒雷射（不是溫和的淨膚）。"),q:["area"],
+  a:/(pico|피코|ピコ|皮秒).{0,6}(spot|스팟|スポット|斑)|(잡티|흑자|기미).{0,6}레이저/i},
+ pico_toning:{norm:"tx",kr:[10900,165000],ab:{jp:{v:[7800],c:"JPY"},tw:{v:[5000,15000],c:"TWD"},hk:{v:[6600,10000],c:"HKD"},cn:{v:[2000,5500],c:"CNY",nt:"face"}},
+  n:T("Pico toning","ピコトーニング","皮秒淨膚"),
+  w:T("Pico toning: a gentle full-face pico-laser pass for pigment and tone, usually done in a series.","ピコトーニング：全顔に弱く当てるピコレーザー。通常は複数回。","皮秒淨膚：全臉溫和皮秒雷射，通常需多次。"),q:["area"],
+  a:/pico|피코|ピコ|皮秒|picoway|피코웨이|picosure|discovery/i},
+ laser_toning:{norm:"tx",kr:[16500,220000],ab:{tw:{v:[2000,5000],c:"TWD"}},
+  n:T("Laser toning (Nd:YAG)","レーザートーニング","淨膚雷射"),
+  w:T("Laser toning with an Nd:YAG laser for melasma and tone.","Nd:YAGレーザーでの肝斑・トーントーニング。","以Nd:YAG雷射改善肝斑與膚色。"),q:["area"],
+  a:/toning|토닝|トーニング|淨膚|净肤|레블라이트|revlite|spectra|스펙트라/i},
+ ipl:{norm:"tx",kr:[39000,270000],ab:{jp:{v:[7800],c:"JPY"},tw:{v:[3000,8000],c:"TWD"},cn:{v:[800,3600],c:"CNY"}},
+  n:T("IPL (photo facial)","IPL（フォトフェイシャル）","脈衝光 IPL"),
+  w:T("IPL light treatment for redness and spots.","赤みやシミ向けの光治療IPL。","脈衝光，改善泛紅與斑點。"),q:["area"],
+  a:/\bipl\b|photo\s*facial|フォト|光子|脈衝光|脉冲光|bbl|m22|아이피엘/i},
+ mole:{norm:"spot",kr:[5500,110000],ab:{jp:{v:[2600],c:"JPY",nt:"per3"},tw:{v:[500,3000],c:"TWD"}},
+  n:T("Mole / spot removal","ほくろ除去","點痣"),
+  w:T("Mole or small spot removal, priced per spot by size.","ほくろ・小さなイボの除去。大きさにより1個ごとの価格。","點痣或小疣去除，依大小每顆計價。"),q:[],
+  a:/mole|점\s*빼|점\s*제거|점치료|ほくろ|點痣|点痣|痣|wart|비립종|milia/i},
+ fractional:{norm:"tx",kr:[53900,450000],ab:{tw:{v:[8000,20000],c:"TWD"},hk:{v:[10000],c:"HKD",nt:"face"},us:{v:[1829],c:"USD",nt:"avg"}},
+  n:T("Fractional / CO2 resurfacing","フラクショナル・CO2","飛梭／CO2雷射"),
+  w:T("Fractional or CO2 laser resurfacing for scars and texture; needs downtime.","傷跡・肌質用のフラクショナル／CO2レーザー。ダウンタイムあり。","飛梭或CO2雷射，改善疤痕與膚質，需恢復期。"),q:["area"],
+  a:/fraxel|fractional|프락셀|프랙셔널|フラクショナル|飛梭|点阵|點陣|co2|resurfac/i},
+ hair_removal:{norm:"area",kr:[10800,300000],ab:{jp:{v:[500,9800],c:"JPY",nt:"areas"},tw:{v:[1000,5000],c:"TWD"},us:{v:[697],c:"USD",nt:"avg"}},
+  n:T("Laser hair removal (per area)","医療脱毛（1部位）","雷射除毛（每部位）"),
+  w:T("Laser hair removal. Price depends on the body part; several sessions are needed.","医療レーザー脱毛。部位で価格が変わり、複数回必要です。","雷射除毛，價格依部位而定，需多次。"),q:["area"],
+  a:/hair\s*removal|제모|脱毛|除毛|脫毛|겨드랑이|underarm|armpit|gentlemax|젠틀맥스|apogee|아포지/i},
+ thread_lift:{norm:"thread",kr:[47000,73300],ab:{jp:{v:[9600],c:"JPY"},tw:{v:[30000,80000],c:"TWD",nt:"face"}},
+  n:T("Thread lift","糸リフト","埋線拉提"),
+  w:T("Thread lift with dissolvable threads. Price depends on the number and type of threads.","溶ける糸でのリフト。糸の本数と種類で価格が変わります。","可吸收線埋線拉提，價格依線的數量與種類而定。"),q:["count","product"],
+  a:/thread|실\s*리프팅|실리프팅|민트실|mint|糸リフト|スレッド|埋線|线雕|線雕|pdo/i},
+ contour_inj:{norm:"cc",kr:[5500,10000],ab:{jp:{v:[8000],c:"JPY"},tw:{v:[3000,8000],c:"TWD",nt:"sess"}},
+  n:T("Contour / fat-dissolving injection","脂肪溶解注射","溶脂針（輪廓針）"),
+  w:T("Contour or fat-dissolving injections for small fat areas, priced by amount.","小さな脂肪部位用の輪郭・脂肪溶解注射。量で価格が変わります。","小範圍脂肪用的輪廓／溶脂針，依用量計價。"),q:["cc"],
+  a:/윤곽\s*주사|지방\s*분해|fat\s*dissolv|lipo\s*dissolv|kybella|脂肪溶解|溶脂|輪廓針|fatx|v-?line\s*inj/i},
+ aqua_peel:{norm:"tx",kr:[20000,110000],ab:{tw:{v:[3000,6000],c:"TWD",nt:"diff"},cn:{v:[50,200],c:"CNY"}},
+  n:T("Aqua peel / Hydrafacial","アクアピール","水飛梭（小氣泡）"),
+  w:T("Aqua peel: a cleansing facial with water suction. Simple care, not a laser.","アクアピール：吸引式の洗浄フェイシャル。レーザーではありません。","水飛梭：吸引式清潔護理，不是雷射。"),q:[],
+  a:/aqua\s*peel|아쿠아필|アクアピール|hydra\s*facial|하이드라|水飛梭|小氣泡|小气泡/i},
+ ldm:{norm:"tx",kr:[40000,110000],ab:{},
+  n:T("LDM (ultrasound care)","LDM（超音波ケア）","LDM 水滴超音波"),
+  w:T("LDM, a soothing ultrasound skin care, often added after lasers.","LDM：鎮静用の超音波ケア。レーザー後に追加されることが多い。","LDM鎮靜超音波保養，常在雷射後加做。"),q:[],
+  a:/\bldm\b|엘디엠/i},
+ other:{norm:null,kr:null,ab:{},n:T("Other / not in our list","その他・リスト外","其他／不在清單"),w:null,q:[]}
+};
+const REF_KEYS = Object.keys(REF);
+
+/* ---------- Text parsing ---------- */
+const RX = {
+ krw: /(?:₩|￦|\bW|\bw|KRW)\s*([0-9][0-9,.\s]{2,}[0-9])|([0-9][0-9,.]{2,}[0-9])\s*(?:원|won|KRW)|([0-9]+(?:\.[0-9]+)?)\s*만\s*원?/gi,
+ foreign: /(US\$|HK\$|NT\$|\$|¥|￥|円|元|RMB|USD|JPY|TWD|HKD|CNY)\s*[0-9]|[0-9]\s*(円|元|塊)/i,
+ bare: /\b([0-9]{1,3}(?:,[0-9]{3})+)\b/g,
+ pct: /([0-9]{1,2})\s*%/,
+ period: /([0-9]{1,2}[./][0-9]{1,2})\s*[-~–]\s*([0-9]{1,2}[./][0-9]{1,2})/,
+ limited: /one\s*time|limited|while\s*supplies|한정|선착순|限定|限時|限量|限时|期間限定/i,
+ vatEx: /(vat|부가세|부가가치세)\s*(not\s*included|별도|excluded|separate|미포함)|税別|未稅|未税|未含稅|\+\s*vat/i,
+ vatIn: /(vat|부가세)\s*(included|포함)|税込|含稅|含税/i,
+ first: /first\s*visit|첫\s*방문|신규|初回|首次|初診|初诊/i,
+ foreigner: /foreigner|외국인|外国人|外國人/i,
+ tip: /tip\s*(not\s*included|separate|extra)|팁\s*(별도|비용)|チップ(代)?別|探頭另計|探头另计/i,
+ min: /(?:min(?:imum)?\.?|최소|最低|最少)\s*([0-9lI]+(?:\.[0-9]+)?)\s*(cc|ml|shots?|샷|units?|유닛|부위|회)?/i
+};
+const UNIT_RX = [
+ [/([0-9lI]+(?:\.[0-9]+)?)\s*(?:cc|ml|㏄|씨씨)(?![A-Za-z])/i,"cc"],
+ [/([0-9]{2,5})\s*(?:shots?|샷|ショット|発|發|发|lines?)/i,"shots"],
+ [/([0-9]{1,4})\s*(?:units?|유닛|単位|單位|u)(?![A-Za-z])/i,"units"],
+ [/([0-9lI]+)\s*(?:vials?|바이알|병|本)/i,"vial"],
+ [/([0-9]{1,2})\s*(?:areas?|부위|部位)/i,"area"],
+ [/([0-9]{1,2})\s*(?:sessions?|회|回|次)/i,"session"],
+ [/([0-9]{1,3})\s*(?:threads?|줄|가닥)/i,"thread"],
+ [/([0-9]{1,3})\s*(?:spots?|개|個|顆)/i,"spot"]
+];
+const toNum = s => Number(String(s).replace(/[lI]/g,"1"));
+function findPrices(t){
+  const out=[]; let m; RX.krw.lastIndex=0;
+  while((m=RX.krw.exec(t))){
+    let raw, v, unc=false;
+    if(m[3]){ v=Math.round(parseFloat(m[3])*10000); raw=m[0]; }
+    else { raw=(m[1]||m[2]).replace(/\s/g,""); v=parseDigits(raw); unc=v.unc; v=v.v; }
+    if(v>=1000) out.push({v,unc,idx:m.index});
+  }
+  if(!out.length){ RX.bare.lastIndex=0; while((m=RX.bare.exec(t))){ const v=parseDigits(m[1]); if(v.v>=1000) out.push({v:v.v,unc:v.unc,idx:m.index}); } }
+  return out;
+}
+function parseDigits(raw){
+  let unc=false; const groups=raw.split(/[,.]/);
+  if(groups.length>1 && groups.slice(1).some(g=>g.length!==3)) unc=true;
+  let d=raw.replace(/[^0-9]/g,"");
+  if(groups.length===1 && d.length>=6) unc=true;
+  while(d.length>4 && Number(d)%100!==0){ d=d.slice(0,-1); unc=true; }
+  return {v:Number(d),unc};
+}
+const FAMILY={rejuran_eye:"rejuran",rejuran_hb:"rejuran",rejuran_healer:"rejuran",ultherapy_prime:"ulthera",ulthera:"ulthera",thermage_flx:"thermage",thermage_unknown:"thermage",
+ botox_masseter:"botox",skin_botox:"botox",botox_area:"botox",pico_spot:"pico",pico_toning:"pico",skinvive:"filler",laser_toning:"pico"};
+function matchCatalog(t){
+  const hits=[]; for(const k of REF_KEYS){ const r=REF[k]; if(r.a && r.a.test(t)) hits.push(k); }
+  if(!hits.length) return {key:"other",pkg:false};
+  // A bundle mentions two different families (e.g. filler + botox); specific keys of one family don't count twice.
+  const fams=[...new Set(hits.map(k=>FAMILY[k]||k))];
+  const pkg = fams.length>1;
+  return {key:hits[0],pkg};
+}
+function parseQty(t){
+  for(const [rx,u] of UNIT_RX){ const m=t.match(rx); if(m) return {q:toNum(m[1]),u}; }
+  return {q:null,u:null};
+}
+function isNameLine(t){
+  if(t.length<3 || t.length>70) return false;
+  if(!/[A-Za-z가-힣ぁ-んァ-ヶ一-龥]{2,}/.test(t)) return false;
+  return true;
+}
+
+/* lines: [{t, b:[x0,y0,x1,y1]}] in reading order. Returns the data object renderResult expects. */
+function parseLines(lines){
+  const all=lines.map(l=>({...l, t:l.t.replace(/\s+/g," ").trim()})).filter(l=>l.t);
+  const text=all.map(l=>l.t).join("\n");
+  const data={clinic:null, period:null, vat:"unknown", general_conditions:[], items:[]};
+  if(RX.vatEx.test(text)) data.vat="excluded"; else if(RX.vatIn.test(text)) data.vat="included";
+  const pm=text.match(RX.period); if(pm) data.period=pm[1]+" – "+pm[2];
+  if(RX.first.test(text)) data.general_conditions.push(UI[lang].firstVisit||"First visit only");
+  if(RX.foreigner.test(text)) data.general_conditions.push(UI[lang].foreignerOnly||"Foreigner price");
+  if(RX.foreign.test(text) && !/₩|원|KRW|\bW\s?[0-9]/i.test(text)) data.general_conditions.push(UI[lang].notKRW);
+
+  all.forEach(l=>{ l.prices=findPrices(l.t); l.cat=matchCatalog(l.t); l.named = l.cat.key!=="other"; l.h=Math.max(4,l.b[3]-l.b[1]); });
+  const used=new Set();
+  const priceLines=all.filter(l=>l.prices.length);
+  for(const P of priceLines){
+    let nameLines=[];
+    const ownName = P.t.replace(RX.krw,"").replace(RX.bare,"").replace(/[0-9]{1,2}\s*%/,"").trim();
+    if(P.named) nameLines=[{t:ownName}];
+    else {
+      // 1) same row, to the left
+      const yc=(P.b[1]+P.b[3])/2;
+      let best=null, bd=1e9;
+      for(const L of all){ if(L===P||L.prices.length||used.has(L)||!isNameLine(L.t)) continue;
+        if(L.b[2]<=P.b[0]+4 && L.b[1]<yc && L.b[3]>yc){ const d=P.b[0]-L.b[2]; if(d<bd){bd=d;best=L;} } }
+      if(best){ nameLines=[best]; used.add(best); }
+      else {
+        // 2) the closest line above in the same column, then the lines stacked above it
+        bd=1e9;
+        for(const L of all){ if(L===P||L.prices.length||used.has(L)||!isNameLine(L.t)) continue;
+          if(L.b[3] > P.b[1]+4) continue;
+          const dy=P.b[1]-L.b[3], dx=Math.abs(P.b[0]-L.b[0]);
+          if(dx>Math.max(160,(P.b[2]-P.b[0])*2.5) || dy>P.h*6) continue;
+          const s=dy+1.5*dx; if(s<bd){bd=s;best=L;} }
+        if(best){
+          nameLines=[best]; used.add(best);
+          let cur=best;
+          for(let guard=0; guard<5; guard++){
+            const up=all.filter(L=>!used.has(L)&&!L.prices.length&&isNameLine(L.t)&&Math.abs(L.b[0]-cur.b[0])<=10&&L.b[3]<=cur.b[1]+3&&cur.b[1]-L.b[3]<Math.max(cur.h,L.h)*1.6)
+                        .sort((a,b)=>b.b[3]-a.b[3])[0];
+            if(!up) break; nameLines.unshift(up); used.add(up); cur=up;
+          }
+        }
+      }
+    }
+    if(!nameLines.length) continue;
+    const full=nameLines.map(l=>l.t).join(" ");
+    const conds=[]; let limited=RX.limited.test(full)||RX.limited.test(P.t);
+    const firstHere=/first\s*vis|첫\s*방문|初回|首次/i.test(full);
+    let label=full.replace(/one\s*time\s*(limited|limit|lim)?/ig,"").replace(/first\s*visit\s*(only|on\b|onl\w*)?/ig,"").replace(/첫\s*방문\s*(한정)?|初回限定|首次限定/g,"").replace(/\s{2,}/g," ").trim();
+    if(firstHere) conds.push(UI[lang].firstVisit);
+    const cat=matchCatalog(label);
+    const qty=parseQty(label);
+    const ps=P.prices.map(p=>p.v);
+    let price=Math.min(...ps), orig=ps.length>1?Math.max(...ps):null;
+    const pct=P.t.match(RX.pct);
+    if(!orig && pct){ const r=Number(pct[1]); if(r>0&&r<90) conds.push("−"+r+"%"); }
+    const mm=(label+" "+P.t).match(RX.min);
+    data.items.push({label: label||"?", catalog:cat.key, package:cat.pkg, quantity:qty.q, unit:qty.u, price, currency:"KRW",
+      original_price: orig&&orig>price?orig:null, min_quantity: mm?toNum(mm[1]):null, tip_excluded: RX.tip.test(full+" "+P.t),
+      event_limited: limited, conditions: conds, uncertain: P.prices.some(p=>p.unc)});
+  }
+  // A tip-excluded or minimum note printed once for the whole image applies to every item it names nowhere else.
+  if(RX.tip.test(text)) data.items.forEach(it=>{ if(/shots?|샷/i.test(it.unit||"")||["ultherapy_prime","ulthera","thermage_flx","thermage_unknown","shurink","oligio","potenza"].includes(it.catalog)) it.tip_excluded=true; });
+  return data;
+}
+function textToLines(s){
+  return s.split(/\n+/).map((t,i)=>({t, b:[0,i*20,Math.max(10,t.length*8),i*20+14]}));
+}
+
+/* ---------- OCR (tesseract.js, served with this page) ---------- */
+const OCR_BASE = new URL("ocr/", location.href).href;
+let tessP=null, worker=null, workerLangs="", ctlStop=false;
+function loadTess(){
+  if(!tessP) tessP=new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=OCR_BASE+"tesseract.min.js"; s.onload=()=>res(window.Tesseract); s.onerror=()=>rej(new Error("load")); document.head.append(s); });
+  return tessP;
+}
+async function getWorker(){
+  const langs = ["kor","eng"].concat(lang==="ja"?["jpn"]:lang==="zh"?["chi_tra"]:[]);
+  const key=langs.join("+");
+  if(worker && workerLangs===key) return worker;
+  if(worker){ try{ await worker.terminate(); }catch(e){} worker=null; }
+  const Tess=await loadTess();
+  setStatus(UI[lang].loading);
+  worker=await Tess.createWorker(langs,1,{workerPath:OCR_BASE+"qc-worker.js",workerBlobURL:false,corePath:OCR_BASE,langPath:OCR_BASE+"lang",gzip:true,
+    logger:m=>{ if(m.status==="recognizing text") setStatus(UI[lang].reading+" "+Math.round((m.progress||0)*100)+"%"); }});
+  await worker.setParameters({tessedit_pageseg_mode:"11"});
+  workerLangs=key; return worker;
+}
+function prepImage(file){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file); const im=new Image();
+    im.onload=()=>{
+      URL.revokeObjectURL(url);
+      const scale = Math.max(1, Math.min(3, 3000/Math.max(im.width,im.height)));
+      const c=document.createElement("canvas"); c.width=Math.round(im.width*scale); c.height=Math.round(im.height*scale);
+      const x=c.getContext("2d"); x.imageSmoothingQuality="high"; x.drawImage(im,0,0,c.width,c.height);
+      const d=x.getImageData(0,0,c.width,c.height), a=d.data;
+      let sum=0; for(let i=0;i<a.length;i+=4) sum+=0.299*a[i]+0.587*a[i+1]+0.114*a[i+2];
+      const invert = sum/(a.length/4) < 110; // dark banners: light text on dark background reads better inverted
+      for(let i=0;i<a.length;i+=4){ let g=0.299*a[i]+0.587*a[i+1]+0.114*a[i+2]; if(invert) g=255-g; g=Math.max(0,Math.min(255,(g-128)*1.6+128)); a[i]=a[i+1]=a[i+2]=g; }
+      x.putImageData(d,0,0); c.toBlob(b=>b?res({blob:b,scale}):rej(new Error("img")),"image/png");
+    };
+    im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("img")); };
+    im.src=url;
+  });
+}
+async function ocrFiles(list){
+  const w=await getWorker(); const lines=[]; let yOff=0;
+  for(const f of list){
+    if(ctlStop) break;
+    const {blob,scale}=await prepImage(f);
+    setStatus(UI[lang].reading);
+    const r=await w.recognize(blob,{},{blocks:true,text:true});
+    let maxY=0;
+    for(const b of r.data.blocks||[]) for(const p of b.paragraphs||[]) for(const l of p.lines||[]){
+      const bb=[l.bbox.x0,l.bbox.y0,l.bbox.x1,l.bbox.y1].map(v=>v/scale); bb[1]+=yOff; bb[3]+=yOff; maxY=Math.max(maxY,bb[3]);
+      lines.push({t:l.text, b:bb, conf:l.confidence});
+    }
+    yOff=maxY+200;
+  }
+  return lines;
+}
+
+/* ---------- Upload UI ---------- */
+let files=[], running=false;
+function setStatus(t, err){ const s=$("#status"); s.textContent=t||""; s.className="status"+(err?" err":""); }
+function addFiles(list){ for (const f of list){ if(f && /^image\//.test(f.type) && files.length<4) files.push(f); } renderThumbs(); }
+function renderThumbs(){
+  const t=$("#thumbs"); t.textContent="";
+  files.forEach((f,i)=>{
+    const d=el("div","thumb"); const img=el("img"); img.alt=""; img.src=URL.createObjectURL(f); img.onload=()=>URL.revokeObjectURL(img.src);
+    const b=el("button",null,UI[lang].remove); b.type="button"; b.addEventListener("click",()=>{ files.splice(i,1); renderThumbs(); });
+    d.append(img,b); t.append(d);
+  });
+}
+$("#file").addEventListener("change",e=>{ addFiles(e.target.files); e.target.value=""; });
+const drop=$("#drop");
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
+document.addEventListener("paste",e=>{
+  const imgs=[...(e.clipboardData?.items||[])].filter(i=>i.kind==="file"&&/^image\//.test(i.type)).map(i=>i.getAsFile());
+  if(imgs.length){ e.preventDefault(); addFiles(imgs); }
+});
+
+$("#runBtn").addEventListener("click", async ()=>{
+  if(running) return;
+  const text=$("#qtext").value.trim();
+  if(!files.length && !text){ setStatus(UI[lang].empty,true); return; }
+  running=true; ctlStop=false; $("#runBtn").disabled=true; $("#stopBtn").hidden=false; $("#res").textContent=""; $("#edit").textContent="";
+  try{
+    let lines=[];
+    if(files.length) lines=lines.concat(await ocrFiles(files.slice()));
+    if(text){ const off=lines.reduce((m,l)=>Math.max(m,l.b[3]),0)+200; lines=lines.concat(textToLines(text).map(l=>({t:l.t,b:[l.b[0],l.b[1]+off,l.b[2],l.b[3]+off]}))); }
+    if(ctlStop){ setStatus(""); return; }
+    const data=parseLines(lines);
+    setStatus("");
+    renderEditor(data);
+    renderResult(data);
+  }catch(e){
+    setStatus(e&&e.message==="img"?UI[lang].errImg:UI[lang].err,true);
+  }finally{ running=false; $("#runBtn").disabled=false; $("#stopBtn").hidden=true; }
+});
+$("#sampleBtn").addEventListener("click",async ()=>{
+  if(running) return;
+  try{ const r=await fetch(new URL("sample/quote-sample.png",location.href).href); const b=await r.blob(); files=[new File([b],"example.png",{type:"image/png"})]; renderThumbs(); $("#runBtn").click(); }
+  catch(e){ setStatus(UI[lang].err,true); }
+});
+$("#stopBtn").addEventListener("click",async ()=>{ ctlStop=true; if(worker){ try{ await worker.terminate(); }catch(e){} worker=null; workerLangs=""; } setStatus(""); });
+
+/* ---------- Editable table ---------- */
+let editData=null;
+function renderEditor(data){
+  editData=data; const L=UI[lang]; const E=$("#edit"); E.textContent="";
+  const box=el("div","edit");
+  box.append(el("h3",null,L.editTitle));
+  if(data.items.some(i=>i.uncertain)) box.append(el("p","status",L.editHint));
+  const top=el("div","erow-top");
+  const vl=el("label",null,L.vatLabel+" "); const vs=el("select"); ["excluded","included","unknown"].forEach(v=>{ const o=el("option",null,L.vatOpt[v]); o.value=v; if(data.vat===v) o.selected=true; vs.append(o); });
+  vs.addEventListener("change",()=>{ data.vat=vs.value; }); vl.append(vs); top.append(vl); box.append(top);
+  const list=el("div","erows");
+  const addRow=(it)=>{
+    const r=el("div","erow"+(it.uncertain?" unc":""));
+    const nm=el("input"); nm.value=it.label||""; nm.setAttribute("aria-label",L.colName); nm.placeholder=L.colName;
+    nm.addEventListener("change",()=>{ it.label=nm.value; const c=matchCatalog(nm.value); if(c.key!=="other"){ it.catalog=c.key; cs.value=c.key; } it.package=c.pkg; });
+    const cs=el("select"); cs.setAttribute("aria-label",L.colCat);
+    REF_KEYS.forEach(k=>{ const o=el("option",null,REF[k].n[lang]); o.value=k; if(k===it.catalog) o.selected=true; cs.append(o); });
+    cs.addEventListener("change",()=>{ it.catalog=cs.value; });
+    const qn=el("input"); qn.type="number"; qn.inputMode="decimal"; qn.min="0"; qn.step="any"; qn.value=it.quantity??""; qn.setAttribute("aria-label",L.colQty); qn.placeholder=L.colQty;
+    qn.addEventListener("change",()=>{ it.quantity=qn.value===""?null:Number(qn.value); });
+    const us=el("select"); us.setAttribute("aria-label",L.colQty);
+    Object.keys(L.unitOpt).forEach(u=>{ const o=el("option",null,L.unitOpt[u]); o.value=u; if((it.unit||"")===u) o.selected=true; us.append(o); });
+    us.addEventListener("change",()=>{ it.unit=us.value||null; });
+    const pr=el("input"); pr.type="number"; pr.inputMode="numeric"; pr.min="0"; pr.value=it.price??""; pr.setAttribute("aria-label",L.colPrice); pr.placeholder=L.colPrice;
+    pr.addEventListener("change",()=>{ it.price=pr.value===""?null:Number(pr.value); it.uncertain=false; r.classList.remove("unc"); });
+    const og=el("input"); og.type="number"; og.inputMode="numeric"; og.min="0"; og.value=it.original_price??""; og.setAttribute("aria-label",L.colOrig); og.placeholder=L.colOrig;
+    og.addEventListener("change",()=>{ it.original_price=og.value===""?null:Number(og.value); });
+    const lim=el("label","chk"); const lc=el("input"); lc.type="checkbox"; lc.checked=!!it.event_limited; lc.addEventListener("change",()=>{ it.event_limited=lc.checked; }); lim.append(lc, document.createTextNode(" "+L.colLim));
+    const tip=el("label","chk"); const tc=el("input"); tc.type="checkbox"; tc.checked=!!it.tip_excluded; tc.addEventListener("change",()=>{ it.tip_excluded=tc.checked; }); tip.append(tc, document.createTextNode(" "+L.colTip));
+    const del=el("button","btn2 del",L.remove); del.type="button"; del.addEventListener("click",()=>{ data.items.splice(data.items.indexOf(it),1); r.remove(); });
+    const g1=el("div","eg name"); g1.append(nm); const g2=el("div","eg cat"); g2.append(cs);
+    const g3=el("div","eg qty"); g3.append(qn,us); const g4=el("div","eg money"); g4.append(pr,og);
+    const g5=el("div","eg flags2"); g5.append(lim,tip,del);
+    if(it.uncertain) g1.prepend(el("span","uncm","⚠"));
+    r.append(g1,g2,g3,g4,g5); list.append(r);
+  };
+  data.items.forEach(addRow);
+  box.append(list);
+  const row=el("div","uprow");
+  const add=el("button","btn2",L.addRow); add.type="button";
+  add.addEventListener("click",()=>{ const it={label:"",catalog:"other",quantity:null,unit:null,price:null,currency:"KRW",original_price:null,min_quantity:null,tip_excluded:false,event_limited:false,conditions:[],uncertain:false}; data.items.push(it); addRow(it); });
+  const go=el("button","btn",L.recheck); go.type="button";
+  go.addEventListener("click",()=>{ renderResult(data); $("#res").scrollIntoView({behavior:"smooth",block:"start"}); });
+  row.append(add,go); box.append(row);
+  E.append(box);
+}
+
+/* ---------- Result ---------- */
+const won = v => "₩"+Math.round(v).toLocaleString("en-US");
+const rng = r => r[0]===r[1] ? won(r[0]) : won(r[0])+" – "+won(r[1]);
+const fmtLocal = (v,c) => (CUR_SIGN[c]||"")+(v.length===1||v[0]===v[1] ? v[0].toLocaleString("en-US") : v[0].toLocaleString("en-US")+"–"+v[1].toLocaleString("en-US"));
+function normQty(it, norm){
+  const q=Number(it.quantity)||null, u=it.unit;
+  if(norm==="cc") return (u==="cc"&&q) ? q : null;
+  if(norm==="vial") return (u==="vial"&&q) ? q : (!u ? 1 : null);
+  if(norm==="s100") return (u==="shots"&&q) ? q/100 : null;
+  if(norm==="s600") return (u==="shots"&&q) ? q/600 : null;
+  if(norm==="area") return ((u==="area"||u==="session")&&q) ? q : (!u ? 1 : null);
+  if(norm==="spot") return (u==="spot"&&q) ? q : (!u ? 1 : null);
+  if(norm==="tx") return (u==="session"&&q) ? q : 1;
+  if(norm==="thread") return (u==="thread"&&q) ? q : null;
+  return null;
+}
+let lastData=null;
+function renderResult(data){
+  lastData=data;
+  const R=$("#res"); R.textContent="";
+  const L=UI[lang];
+  if(!data||!Array.isArray(data.items)||!data.items.length){ R.append(el("p","status",L.none)); if(data&&!$("#edit").childNodes.length) renderEditor(data); return; }
+  R.append(el("h3",null,L.read));
+  const meta=el("div","res-meta");
+  if(data.clinic) meta.append(el("span","chip",L.clinic+": "+data.clinic));
+  if(data.period) meta.append(el("span","chip",L.period+": "+data.period));
+  meta.append(el("span","chip"+(data.vat==="included"?"":" warn"), data.vat==="excluded"?L.vatEx:data.vat==="included"?L.vatIn:L.vatUnk));
+  (data.general_conditions||[]).forEach(c=>meta.append(el("span","chip warn",c)));
+  R.append(meta);
+
+  const asks=new Set(); if(data.vat!=="included") asks.add("vat");
+  data.items.forEach(it=>{
+    const ref=REF[it.catalog]||REF.other;
+    const card=el("div","item");
+    const head=el("div","item-head");
+    const lft=el("div"); lft.style.minWidth="0"; lft.append(el("div","nm",it.label||"?"));
+    if(it.catalog!=="other") lft.append(el("div","orig",REF[it.catalog].n[lang]));
+    if(it.original_price && it.price) lft.append(el("div","orig num", won(it.original_price)+"  →  −"+Math.round((1-it.price/it.original_price)*100)+"%"));
+    head.append(lft, el("div","quote num", it.price? won(it.price) : "?"));
+    card.append(head);
+
+    let verdict=null;
+    const facts=el("dl","facts");
+    const addFact=(k,v,cls)=>{ const dt=el("dt",null,k), dd=el("dd",cls||null,v); facts.append(dt,dd); };
+    const minQ=Number(it.min_quantity)||0, q=Number(it.quantity)||0;
+    let payBase = it.price||0;
+    if(it.price && minQ && q && minQ>q) payBase = it.price*(minQ/q);
+    const vatMul = data.vat==="excluded" ? 1.1 : 1;
+    if(it.price && it.currency!=="other"){
+      addFact(L.listed, won(it.price)+(q&&it.unit?"  ("+q+" "+(L.unitOpt[it.unit]||it.unit)+")":""));
+      if(payBase!==it.price || vatMul!==1) addFact(L.eff+(payBase!==it.price?" ("+L.minPay+")":""), won(payBase*vatMul)+(data.vat==="unknown"?" / "+won(payBase*1.1):""));
+    }
+    const nq = (ref.norm && !it.package) ? normQty(it, ref.norm) : null;
+    const pu = ref.norm ? L.perUnit[ref.norm] : "";
+    if(ref.kr && !it.package) addFact(L.krRange+" ("+pu+")", rng(ref.kr));
+    if(ref.kr && it.price && nq && !it.package){
+      const per = it.price*vatMul/nq; // Korean ranges are what people pay, VAT included
+      addFact("→ "+L.thisQuote+" ("+pu+")", won(per));
+      const tol = ref.kr[0]===ref.kr[1] ? 0.25 : 0.1; // a single published price gets a wider band
+      verdict = per < ref.kr[0]*(1-tol) ? "below" : per > ref.kr[1]*(1+tol) ? "above" : "within";
+    }
+    if(!it.package){
+      for(const c of C_ORDER[lang]){
+        const a=ref.ab&&ref.ab[c]; if(!a) continue;
+        const krw=a.v.map(v=>v*FX[a.c]);
+        const lab=COUNTRY[c][lang]+" ("+(a.nt?NOTE[a.nt][lang]:pu)+")";
+        addFact(lab, rng([Math.round(krw[0]/1000)*1000,Math.round(krw[krw.length-1]/1000)*1000])+"  · "+fmtLocal(a.v,a.c), "abroad");
+      }
+    }
+    if(facts.childNodes.length) card.append(facts);
+
+    const flags=el("div","flags");
+    if(it.package){ flags.append(el("p",null,L.pkg)); asks.add("split"); }
+    if(ref.w) flags.append(el("p",null,ref.w[lang]));
+    if(ref.krg) flags.append(el("p",null,L.krGuide));
+    if(verdict) flags.append(el("p",null,L[verdict]));
+    if(!ref.kr && !it.package && it.catalog!=="other") flags.append(el("p",null,L.noRef));
+    if(minQ) { flags.append(el("p",null,L.minq.replace("{n}",minQ+(it.unit?" "+(L.unitOpt[it.unit]||it.unit):"")))); asks.add("min"); }
+    if(it.tip_excluded) flags.append(el("p",null,L.tip));
+    if(it.event_limited) flags.append(el("p",null,L.event));
+    if(it.original_price) flags.append(el("p",null,L.origNote));
+    if(it.currency==="other") flags.append(el("p",null,L.notKRW));
+    if(it.uncertain) flags.append(el("p",null,L.unc));
+    (it.conditions||[]).forEach(c=>flags.append(el("p",null,c)));
+    card.append(flags);
+    (ref.q||[]).forEach(k=>asks.add(k));
+    R.append(card);
+  });
+  asks.add("receipt");
+  const qb=el("div","item"); const qh=el("div","item-head"); qh.append(el("div","nm",L.askTitle)); qb.append(qh);
+  const cards=el("div","cards"); cards.style.padding="0 16px 16px";
+  [...asks].forEach(key=>{
+    const qq=Q[key]; if(!qq) return; const c=el("div","qcard");
+    const ko=el("span","ko",qq.ko); ko.lang="ko";
+    const btn=el("button",null,L.copy); btn.type="button";
+    btn.addEventListener("click",()=>{ try{ navigator.clipboard.writeText(qq.ko).then(()=>{btn.textContent=L.copied;},()=>selectText(ko)); }catch(e){ selectText(ko);} });
+    c.append(ko,btn,el("span","tr",qq[lang])); cards.append(c);
+  });
+  qb.append(cards); R.append(qb);
+  R.append(el("p","status",L.srcNote));
+}
+UP.en.firstVisit="First visit only"; UP.ja.firstVisit="初回のみ"; UP.zh.firstVisit="僅限首次";
+UP.en.foreignerOnly="Price for foreigners"; UP.ja.foreignerOnly="外国人向け価格"; UP.zh.foreignerOnly="外國人價格";
+for (const l in UP){ UI[l].firstVisit=UP[l].firstVisit; UI[l].foreignerOnly=UP[l].foreignerOnly; }
+
+
+/* ---------- Interest test: is the paid clinic check worth building? ---------- */
+const DOOR={
+ en:{offer:"Want the clinic checked too?",offerD:"Clinic check, $12: this clinic's own Korean-language event prices on the apps Koreans use, whether the doctor is a board-certified dermatologist, and its public sanction record. Reply within 24 hours.",
+  get:"Get the clinic check ($12)",notOpen:"The clinic check isn't open yet. We're finding out whether people want it before we build it. Would you pay $12 for it for this trip?",
+  yes:"Yes, I'd pay $12",no:"Not at that price",thanks:"Thank you. Your answer was counted (anonymously). The free check above stays free.",
+  privacy:"This page counts anonymous taps (page opened, check finished, buttons above) with counterapi.dev to decide whether to build the clinic check. Your images and text never leave your device."},
+ ja:{offer:"クリニックも確認しますか？",offerD:"クリニックチェック（$12）：韓国人が使うアプリでのそのクリニックの韓国語イベント価格、医師が皮膚科専門医か、公開されている行政処分歴。24時間以内に回答。",
+  get:"クリニックチェックを申し込む（$12）",notOpen:"クリニックチェックはまだ始まっていません。作る前に、必要とされているかを確かめています。今回の渡韓で$12払いたいですか？",
+  yes:"はい、$12払います",no:"その価格なら不要",thanks:"ありがとうございます。回答は匿名で集計しました。上の無料チェックはこれからも無料です。",
+  privacy:"このページは、クリニックチェックを作るか決めるため、匿名のタップ数（ページを開いた・チェック完了・上のボタン）をcounterapi.devで数えています。画像や文字があなたの端末の外に出ることはありません。"},
+ zh:{offer:"也要檢查這家診所嗎？",offerD:"診所檢查（$12）：這家診所在韓國人常用App上的韓文活動價、醫師是否為皮膚科專科醫師、公開的行政處分紀錄。24小時內回覆。",
+  get:"申請診所檢查（$12）",notOpen:"診所檢查尚未開放。我們想先確認大家是否需要，再決定是否製作。這趟去韓國，你願意為它付$12嗎？",
+  yes:"願意，付$12",no:"這個價格不要",thanks:"謝謝。你的回答已匿名計入。上方的免費檢查會一直免費。",
+  privacy:"此頁以counterapi.dev匿名計算點擊次數（開啟頁面、完成檢查、上方按鈕），用來決定是否製作診所檢查。你的圖片與文字不會離開你的裝置。"}
+};
+const COUNT_ON = /github\.io$/.test(location.hostname);
+const COUNT_NS = "seoulquotecheck-v1";
+function bump(key){
+  if(!COUNT_ON) return;
+  try{ fetch("https://api.counterapi.dev/v1/"+COUNT_NS+"/"+key+"/up",{mode:"cors",keepalive:true}).catch(()=>{}); }catch(e){}
+}
+function once(key){ let k="qc_"+key; try{ if(sessionStorage.getItem(k)) return; sessionStorage.setItem(k,"1"); }catch(e){} bump(key); }
+once("visit_"+lang);
+function openDoor(host, where){
+  const D=DOOR[lang]; host.hidden=false; host.textContent="";
+  once("door_"+where);
+  host.append(el("p",null,D.notOpen));
+  const row=el("div","uprow");
+  const y=el("button","btn",D.yes); y.type="button"; const n=el("button","btn2",D.no); n.type="button";
+  const done=(k)=>{ once("pay_"+k); row.remove(); host.append(el("p",null,D.thanks)); };
+  y.addEventListener("click",()=>done("yes")); n.addEventListener("click",()=>done("no"));
+  row.append(y,n); host.append(row);
+}
+function addDoor(R){
+  const D=DOOR[lang]; const box=el("div","item door");
+  const h=el("div","item-head"); h.append(el("div","nm",D.offer)); box.append(h);
+  const body=el("div","flags"); body.append(el("p",null,D.offerD));
+  const b=el("button","btn",D.get); b.type="button"; const note=el("div","notice"); note.hidden=true;
+  b.addEventListener("click",()=>{ b.remove(); openDoor(note,"result"); });
+  body.append(b,note); box.append(body); R.append(box);
+}
+const _rr = renderResult;
+renderResult = function(data){ _rr(data); if(data&&data.items&&data.items.length){ once("check_done"); addDoor($("#res")); } };
+const _renderUI = renderUI;
+renderUI = function(){ _renderUI(); { const pv=document.getElementById("privacyNote"); if(pv) pv.textContent=DOOR[lang].privacy; } document.querySelectorAll("[data-i18n-ph]").forEach(n=>n.placeholder=UI[lang][n.dataset.i18nPh]||""); renderThumbs(); if(editData) renderEditor(editData); if(lastData) renderResult(lastData); };
+renderUI();
+
+</script>
+
+</body>
+</html>

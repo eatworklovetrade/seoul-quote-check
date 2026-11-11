@@ -1270,21 +1270,22 @@ const DOOR={
  en:{offer:"Want the clinic checked too?",offerD:"Clinic check, $12: this clinic's own Korean-language event prices on the apps Koreans use, whether the doctor is a board-certified dermatologist, and its public sanction record. Reply within 24 hours.",
   get:"Get the clinic check ($12)",notOpen:"The clinic check isn't open yet. We're finding out whether people want it before we build it. Would you pay $12 for it for this trip?",
   yes:"Yes, I'd pay $12",no:"Not at that price",thanks:"Thank you. Your answer was counted (anonymously). The free check above stays free.",
-  privacy:"This page counts anonymous taps (page opened, check finished, buttons above) with counterapi.dev to decide whether to build the clinic check. Your images and text never leave your device."},
+  privacy:"This page counts anonymous taps (page opened, check finished, buttons above) with hits.sh (no cookies, no IP tracking) to decide whether to build the clinic check. Your images and text never leave your device."},
  ja:{offer:"クリニックも確認しますか？",offerD:"クリニックチェック（$12）：韓国人が使うアプリでのそのクリニックの韓国語イベント価格、医師が皮膚科専門医か、公開されている行政処分歴。24時間以内に回答。",
   get:"クリニックチェックを申し込む（$12）",notOpen:"クリニックチェックはまだ始まっていません。作る前に、必要とされているかを確かめています。今回の渡韓で$12払いたいですか？",
   yes:"はい、$12払います",no:"その価格なら不要",thanks:"ありがとうございます。回答は匿名で集計しました。上の無料チェックはこれからも無料です。",
-  privacy:"このページは、クリニックチェックを作るか決めるため、匿名のタップ数（ページを開いた・チェック完了・上のボタン）をcounterapi.devで数えています。画像や文字があなたの端末の外に出ることはありません。"},
+  privacy:"このページは、クリニックチェックを作るか決めるため、匿名のタップ数（ページを開いた・チェック完了・上のボタン）をhits.sh（Cookie・IP追跡なし）で数えています。画像や文字があなたの端末の外に出ることはありません。"},
  zh:{offer:"也要檢查這家診所嗎？",offerD:"診所檢查（$12）：這家診所在韓國人常用App上的韓文活動價、醫師是否為皮膚科專科醫師、公開的行政處分紀錄。24小時內回覆。",
   get:"申請診所檢查（$12）",notOpen:"診所檢查尚未開放。我們想先確認大家是否需要，再決定是否製作。這趟去韓國，你願意為它付$12嗎？",
   yes:"願意，付$12",no:"這個價格不要",thanks:"謝謝。你的回答已匿名計入。上方的免費檢查會一直免費。",
-  privacy:"此頁以counterapi.dev匿名計算點擊次數（開啟頁面、完成檢查、上方按鈕），用來決定是否製作診所檢查。你的圖片與文字不會離開你的裝置。"}
+  privacy:"此頁以hits.sh（無Cookie、不追蹤IP）匿名計算點擊次數（開啟頁面、完成檢查、上方按鈕），用來決定是否製作診所檢查。你的圖片與文字不會離開你的裝置。"}
 };
 const COUNT_ON = /github\.io$/.test(location.hostname);
-const COUNT_NS = "seoulquotecheck-v1";
+const COUNT_BASE = "https://hits.sh/eatworklovetrade.github.io/seoul-quote-check/";
+const _pings=[];
 function bump(key){
   if(!COUNT_ON) return;
-  try{ fetch("https://api.counterapi.dev/v1/"+COUNT_NS+"/"+key+"/up",{mode:"cors",keepalive:true}).catch(()=>{}); }catch(e){}
+  try{ const im=new Image(); im.referrerPolicy="no-referrer"; im.src=COUNT_BASE+key+".svg"; _pings.push(im); }catch(e){}
 }
 function once(key){ let k="qc_"+key; try{ if(sessionStorage.getItem(k)) return; sessionStorage.setItem(k,"1"); }catch(e){} bump(key); }
 once("visit_"+lang);

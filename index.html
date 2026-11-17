@@ -623,7 +623,7 @@ $("#ctaBtn").addEventListener("click",()=>openDoor($("#ctaNote"),"price"));
 
 /* ---------- Own-quote checker (runs fully in the browser: OCR + parser + price data) ---------- */
 const UP = {
- en:{upTitle:"Check your own quote",upSub:"Upload a screenshot of a price list, event banner or chat, or paste the text. The page reads it right here in your browser (nothing is uploaded, no sign-in), then checks each item against our price data for 34 common treatments.",
+ en:{upTitle:"Check your own quote",upSub:"Upload a screenshot of a price list, event banner or chat, or paste the text. The page reads it right here in your browser (nothing is uploaded, no sign-in), then checks each item against our price data for 61 common treatments.",
   drop:"Drop or paste a screenshot here",choose:"Choose image",textPh:"Or paste the quote text here",run:"Check this quote",stop:"Stop",
   loading:"Loading the text reader (first time only, about 10 MB)…",reading:"Reading the image…",
   err:"Reading didn't finish. Try again, or crop the screenshot closer to the prices.",
@@ -642,8 +642,8 @@ const UP = {
   colName:"Treatment as written",colCat:"Matched to",colQty:"Amount",colPrice:"Price (₩)",colOrig:"Original (₩)",colLim:"Limited",colTip:"Tip extra",
   addRow:"Add a line",recheck:"Check again",vatLabel:"VAT",vatOpt:{excluded:"Not included",included:"Included",unknown:"Not stated"},
   unitOpt:{"":"—",cc:"cc",shots:"shots",area:"area",session:"session",vial:"vial",units:"units",spot:"spot",thread:"thread",kj:"kJ"},
-  srcNote:"Price data as of 11 Nov 2026, converted at 10 Nov 2026 rates. Korean ranges are what people pay including VAT: the middle of event prices on Gangnam Unni, the app Koreans book with (16 Nov 2026: 556 event prices from 175 clinics in Gangnam, Myeongdong, Hongdae and Suwon, plus a nationwide sample on 11 Nov), checked against clinic price pages. Prices abroad are each country's published clinic prices or averages."},
- ja:{upTitle:"自分の見積もりをチェック",upSub:"料金表、イベントバナー、チャットのスクリーンショットをアップロードするか、文字を貼り付けてください。画像はこのブラウザの中で読み取ります（アップロードなし・ログイン不要）。そのあと主要34施術の価格データと照合します。",
+  srcNote:"Price data as of 11 Nov 2026, converted at 10 Nov 2026 rates. Korean ranges are what people pay including VAT: the middle of event prices on Gangnam Unni, the app Koreans book with (16 Nov 2026: 556 event prices from 175 clinics in Gangnam, Myeongdong, Hongdae and Suwon, plus a nationwide sample on 11 Nov), checked against clinic price pages. Prices abroad for lifting, RF and laser devices are medians from a 13-country clinic survey (Jul–Aug 2026, full-face prices converted to each unit); others are published clinic prices or averages."},
+ ja:{upTitle:"自分の見積もりをチェック",upSub:"料金表、イベントバナー、チャットのスクリーンショットをアップロードするか、文字を貼り付けてください。画像はこのブラウザの中で読み取ります（アップロードなし・ログイン不要）。そのあと主要61施術の価格データと照合します。",
   drop:"ここにスクリーンショットをドロップ、または貼り付け",choose:"画像を選ぶ",textPh:"または見積もりの文字を貼り付け",run:"この見積もりをチェック",stop:"中止",
   loading:"文字読み取り機能を準備中（初回のみ、約10MB）…",reading:"画像を読み取り中…",
   err:"読み取りが完了しませんでした。もう一度、または価格部分を切り抜いてお試しください。",
@@ -662,8 +662,8 @@ const UP = {
   colName:"表記どおりの施術名",colCat:"照合先",colQty:"量",colPrice:"価格（₩）",colOrig:"元の価格（₩）",colLim:"限定",colTip:"チップ別",
   addRow:"行を追加",recheck:"もう一度チェック",vatLabel:"付加価値税",vatOpt:{excluded:"別",included:"込み",unknown:"記載なし"},
   unitOpt:{"":"—",cc:"cc",shots:"ショット",area:"部位",session:"回",vial:"本(バイアル)",units:"単位",spot:"個",thread:"本(糸)",kj:"kJ"},
-  srcNote:"価格データは2026年11月11日時点、為替は2026年11月10日。韓国の相場は税込の支払額で、韓国人が予約に使うアプリ「カンナムオンニ」のイベント価格の中央部分（2026年11月16日：江南・明洞・弘大・水原の175院・556件、11月11日の全国サンプル）をクリニック価格ページと照合したものです。海外の価格は各国のクリニック公開価格または平均です。"},
- zh:{upTitle:"檢查你的報價",upSub:"上傳價目表、活動橫幅或聊天截圖，或貼上文字。圖片就在你的瀏覽器裡讀取（不上傳、不用登入），再逐項與34種常見療程的價格資料比對。",
+  srcNote:"価格データは2026年11月11日時点、為替は2026年11月10日。韓国の相場は税込の支払額で、韓国人が予約に使うアプリ「カンナムオンニ」のイベント価格の中央部分（2026年11月16日：江南・明洞・弘大・水原の175院・556件、11月11日の全国サンプル）をクリニック価格ページと照合したものです。リフト・RF・レーザー機器の海外価格は13か国のクリニック調査（2026年7〜8月、全顔価格を単位あたりに換算）の中央値、その他は各国のクリニック公開価格または平均です。"},
+ zh:{upTitle:"檢查你的報價",upSub:"上傳價目表、活動橫幅或聊天截圖，或貼上文字。圖片就在你的瀏覽器裡讀取（不上傳、不用登入），再逐項與61種常見療程的價格資料比對。",
   drop:"把截圖拖到這裡或直接貼上",choose:"選擇圖片",textPh:"或在這裡貼上報價文字",run:"檢查這份報價",stop:"停止",
   loading:"正在載入文字辨識（僅第一次，約10MB）…",reading:"正在讀取圖片…",
   err:"讀取未完成。請再試一次，或把截圖裁切到價格部分。",
@@ -682,9 +682,11 @@ const UP = {
   colName:"原文療程名",colCat:"比對項目",colQty:"數量",colPrice:"價格（₩）",colOrig:"原價（₩）",colLim:"限量",colTip:"探頭另計",
   addRow:"新增一行",recheck:"再檢查一次",vatLabel:"稅",vatOpt:{excluded:"未含",included:"已含",unknown:"未標示"},
   unitOpt:{"":"—",cc:"cc",shots:"發",area:"部位",session:"次",vial:"瓶",units:"單位",spot:"顆",thread:"條",kj:"kJ"},
-  srcNote:"價格資料截至2026年11月11日，匯率為2026年11月10日。韓國行情為含稅實付金額：取自韓國人預約用的App「江南姐姐」活動價的中間區段（2026年11月16日：江南、明洞、弘大、水原175家診所556筆，及11月11日全國樣本），並與診所價目頁核對。海外價格為各國診所公開價格或平均值。"}
+  srcNote:"價格資料截至2026年11月11日，匯率為2026年11月10日。韓國行情為含稅實付金額：取自韓國人預約用的App「江南姐姐」活動價的中間區段（2026年11月16日：江南、明洞、弘大、水原175家診所556筆，及11月11日全國樣本），並與診所價目頁核對。拉提、電波與雷射儀器的海外價格為13國診所調查（2026年7〜8月，全臉價格換算為單位價）的中位數，其他為各國診所公開價格或平均值。"}
 };
 UP.en.krGuide="The Korean range for this one comes from an English guide for foreigners (estimates, often higher than what Koreans pay), not from Korean clinic price pages."; UP.ja.krGuide="この施術の韓国相場は外国人向け英語ガイドの推定値で（韓国人の支払額より高めのことが多い）、韓国のクリニック価格ページではありません。"; UP.zh.krGuide="此療程的韓國行情來自給外國人的英文指南估計（常高於韓國人實付），不是韓國診所價目頁。";
+UP.en.clinicsWord="clinics"; UP.ja.clinicsWord="院"; UP.zh.clinicsWord="家";
+UP.en.otherCountries="Other countries (median, clinics)"; UP.ja.otherCountries="その他の国（中央値・院数）"; UP.zh.otherCountries="其他國家（中位數、診所數）";
 UP.en.byArea="Typical in Seoul areas (median, clinics)"; UP.ja.byArea="ソウルの地域別の目安（中央値・院数）"; UP.zh.byArea="首爾各區行情（中位數、診所數）";
 UP.en.trySample="Try with an example image"; UP.ja.trySample="例の画像で試す"; UP.zh.trySample="用範例圖片試試";
 for (const l in UP) Object.assign(UI[l], UP[l]);
@@ -726,12 +728,17 @@ const NOTE = {
  percc:{en:"per cc",ja:"1ccあたり",zh:"每cc"},
  nonha:{en:"national average, non-HA filler",ja:"全国平均・非ヒアルロン酸",zh:"全國平均、非玻尿酸"},
  promo:{en:"promotion to list price",ja:"キャンペーン〜定価",zh:"促銷價至牌價"},
- face:{en:"full face",ja:"全顔",zh:"全臉"}
+ face:{en:"full face",ja:"全顔",zh:"全臉"},
+ medd:{en:"discount median",ja:"割引価格の中央値",zh:"折扣價中位數"},
+ medl:{en:"list-price median",ja:"定価の中央値",zh:"定價中位數"}
 };
 const COUNTRY = {
  us:{en:"United States",ja:"アメリカ",zh:"美國"}, jp:{en:"Japan",ja:"日本",zh:"日本"}, tw:{en:"Taiwan",ja:"台湾",zh:"台灣"},
- hk:{en:"Hong Kong",ja:"香港",zh:"香港"}, cn:{en:"Mainland China",ja:"中国本土",zh:"中國大陸"}
+ hk:{en:"Hong Kong",ja:"香港",zh:"香港"}, cn:{en:"Mainland China",ja:"中国本土",zh:"中國大陸"},
+ th:{en:"Thailand",ja:"タイ",zh:"泰國"}, ae:{en:"UAE",ja:"UAE",zh:"阿聯"}, es:{en:"Spain",ja:"スペイン",zh:"西班牙"}, fr:{en:"France",ja:"フランス",zh:"法國"},
+ it:{en:"Italy",ja:"イタリア",zh:"義大利"}, uk:{en:"UK",ja:"イギリス",zh:"英國"}, ru:{en:"Russia/CIS",ja:"ロシア・CIS",zh:"俄羅斯/獨聯體"}, br:{en:"Brazil",ja:"ブラジル",zh:"巴西"}
 };
+const C_MORE=["th","ae","es","fr","it","uk","ru","br"];
 const C_ORDER = {en:["us","jp","tw","hk","cn"], ja:["jp","us","tw","hk","cn"], zh:["tw","hk","cn","jp","us"]};
 
 /* Reference catalog. kr: KRW per norm unit (VAT mostly excluded). Abroad: [low, high] in local currency per norm unit unless a note says otherwise.
@@ -750,6 +757,110 @@ const REF = {
   n:T("Rejuran Healer","リジュランヒーラー","麗珠蘭 Healer"),
   w:T("Rejuran Healer, a polynucleotide (PN) skin booster from Korea. Priced per cc; one syringe is 2 cc. Not approved in the US.","リジュランヒーラー（韓国製PNスキンブースター）。cc単位の価格で、1本2cc。米国では未承認。","麗珠蘭Healer（韓國PN肌膚增強注射），以cc計價，一支2cc。美國未核准。"),q:["cc"],
   a:/rejuran|리쥬란|リジュラン|麗珠蘭|丽珠兰/i},
+ volnewmer:{kn:26,norm:"s100",kr:[128300,182400],ab:{},
+  n:T("Volnewmer (monopolar RF)","ボルニューマ","Volnewmer 電波"),
+  w:T("Volnewmer, a Korean monopolar RF tightening device (sold in the US as Everesse). Priced by shots; 600 is a common full face.","韓国製モノポーラRF機器ボルニューマ（米国名Everesse）。ショット数で価格が決まり、全顔は600ショットが一般的。","韓國單極電波緊緻儀Volnewmer（美國名Everesse），依發數計價，全臉常見600發。"),q:["shots", "tip"],
+  a:/volnewmer|볼뉴머|ボルニューマ|everesse/i},
+ density:{kn:24,norm:"s100",kr:[220000,269200],ab:{},
+  n:T("Density (RF)","デンシティ","Density 電波"),
+  w:T("Density, a Korean monopolar RF device. Tips (high, alpha) change the price.","韓国製モノポーラRF機器デンシティ。チップ（ハイ・アルファ）で価格が変わります。","韓國單極電波Density，探頭（High、Alpha）不同價格不同。"),q:["shots", "tip"],
+  a:/density|덴서티|デンシティ/i},
+ serf:{kn:25,norm:"s100",kr:[317800,407600],ab:{},
+  n:T("Serf (RF)","セルフ","Serf 電波"),
+  w:T("Serf, a Korean RF tightening device marketed as low-pain.","痛みが少ないとされる韓国製RF機器セルフ。","以低痛感為賣點的韓國電波緊緻儀Serf。"),q:["shots", "tip"],
+  a:/세르프|serf/i},
+ oligio_x:{kn:16,norm:"s100",kr:[148300,220000],ab:{},
+  n:T("Oligio X (RF)","オリジオX","Oligio X 電波"),
+  w:T("Oligio X, the newer Oligio. Compare per 100 shots.","新型のオリジオX。100ショットあたりで比較。","新款Oligio X，以每100發比較。"),q:["shots", "tip"],
+  a:/(oligio|올리지오|オリジオ)\s*x/i},
+ coolphase:{kn:12,norm:"s100",kr:[200000,240400],ab:{},
+  n:T("Coolphase (RF)","クールフェイズ","Coolphase 電波"),
+  w:T("Coolphase, a Korean RF device with cooling. Priced by shots.","冷却付きの韓国製RF機器クールフェイズ。ショット数で価格。","附冷卻的韓國電波儀Coolphase，依發數計價。"),q:["shots", "tip"],
+  a:/쿨페이즈|cool\s*phase|クールフェイズ/i},
+ linearz:{kn:14,norm:"s100",kr:[62200,79300],ab:{},
+  n:T("Linear Z (HIFU)","リニアZ","Linear Z 音波"),
+  w:T("Linear Z, a Korean HIFU lifting device. Priced per 100 shots.","韓国製HIFU機器リニアZ。100ショットあたりの価格。","韓國HIFU拉提儀Linear Z，以每100發計價。"),q:["shots", "tip"],
+  a:/linear\s*-?z|리니어지|リニアz/i},
+ liftera:{kn:12,norm:"tx",kr:[181500,283800],ab:{},
+  n:T("Liftera (HIFU, full face)","リフテラ（全顔）","Liftera 音波（全臉）"),
+  w:T("Liftera, a HIFU device. Compared as one full-face session.","HIFU機器リフテラ。全顔1回で比較。","HIFU儀Liftera，以全臉一次比較。"),q:["shots"],
+  a:/liftera|리프테라|リフテラ/i},
+ titanium:{kn:34,norm:"kj10",kr:[82500,113400],ab:{},
+  n:T("Titanium lifting (laser)","チタニウムリフト","鈦提升（Titanium）"),
+  w:T("Titanium lifting, a Korean laser-lifting protocol priced by energy (kJ); 60 kJ is a common full face.","韓国式のレーザーリフト「チタニウム」。エネルギー量（kJ）で価格が決まり、全顔は60kJが一般的。","韓式雷射拉提「鈦提升」，依能量（kJ）計價，全臉常見60kJ。"),q:["area"],
+  a:/티타늄|titanium|チタニウム|鈦/i},
+ morpheus8:{kn:11,norm:"tx",kr:[750000,880000],ab:{},
+  n:T("Morpheus8 (RF microneedling)","モーフィアス8","Morpheus8 黃金微針"),
+  w:T("Morpheus8, RF microneedling. Compared as one full-face session.","RFマイクロニードルのモーフィアス8。全顔1回で比較。","Morpheus8電波微針，以全臉一次比較。"),q:["area"],
+  a:/morpheus|모피우스|モーフィアス/i},
+ sylfirm:{kn:15,norm:"tx",kr:[275000,275000],ab:{},
+  n:T("Sylfirm X (RF microneedling)","シルファームX","Sylfirm X 微針"),
+  w:T("Sylfirm X, RF microneedling often used for melasma and redness.","肝斑・赤みに使われることが多いRFマイクロニードル、シルファームX。","常用於肝斑與泛紅的電波微針Sylfirm X。"),q:["area"],
+  a:/sylfirm|실펌|シルファーム/i},
+ secret_rf:{kn:12,norm:"tx",kr:[220000,302500],ab:{},
+  n:T("Secret RF (microneedling)","シークレットRF","Secret RF 微針"),
+  w:T("Secret RF, RF microneedling for scars and pores.","傷跡・毛穴用のRFマイクロニードル、シークレットRF。","改善疤痕與毛孔的電波微針Secret RF。"),q:["area"],
+  a:/secret\s*rf|시크릿\s*rf|시크릿|シークレット/i},
+ virtue:{kn:12,norm:"tx",kr:[313500,550000],ab:{},
+  n:T("Virtue RF (microneedling)","ヴァーチューRF","Virtue RF 微針"),
+  w:T("Virtue RF, RF microneedling.","RFマイクロニードル、ヴァーチューRF。","電波微針Virtue RF。"),q:["area"],
+  a:/virtue|버츄|ヴァーチュー/i},
+ genius:{norm:"tx",kr:null,ab:{},
+  n:T("Genius RF (microneedling)","ジーニアス","Genius 微針"),
+  w:T("Genius, RF microneedling.","RFマイクロニードル、ジーニアス。","電波微針Genius。"),q:["area"],
+  a:/genius|지니어스|ジーニアス/i},
+ quadessy:{kn:4,norm:"tx",kr:[290000,455000],ab:{},
+  n:T("Quadessy (RF microneedling)","クアデッシー","Quadessy 微針"),
+  w:T("Quadessy, a Korean RF microneedling device.","韓国製RFマイクロニードル、クアデッシー。","韓國電波微針Quadessy。"),q:["area"],
+  a:/quadessy|쿼드세이/i},
+ emface:{kn:16,norm:"tx",kr:[660000,880000],ab:{},
+  n:T("EMFACE","エムフェイス","EMFACE"),
+  w:T("EMFACE, RF plus muscle stimulation without needles. Compared as a full face (forehead, cheeks, under the chin).","針を使わないRF＋筋肉刺激のエムフェイス。全顔（額・頬・顎下）で比較。","無針電波加肌肉刺激的EMFACE，以全臉（額頭、雙頰、下巴）比較。"),q:["area"],
+  a:/emface|엠페이스|エムフェイス/i},
+ exilis:{norm:"tx",kr:null,ab:{},
+  n:T("Exilis","エクシリス","Exilis"),
+  w:T("Exilis, an RF plus ultrasound device.","RF＋超音波機器エクシリス。","電波加超音波的Exilis。"),q:["area"],
+  a:/exilis|엑실리스/i},
+ exion:{norm:"tx",kr:null,ab:{},
+  n:T("Exion","エクシオン","Exion"),
+  w:T("Exion, an RF device by BTL.","BTL社のRF機器エクシオン。","BTL的電波儀Exion。"),q:["area"],
+  a:/exion|엑시온/i},
+ reepot:{kn:17,norm:"tx",kr:[1050000,1067500],ab:{},
+  n:T("Reepot (vascular laser)","リポット","Reepot 雷射"),
+  w:T("Reepot, a laser for spots and redness, compared as one full-face session.","シミ・赤み用レーザーのリポット。全顔1回で比較。","用於斑點與泛紅的Reepot雷射，以全臉一次比較。"),q:["area"],
+  a:/reepot|리팟/i},
+ fotona:{norm:"tx",kr:null,ab:{},
+  n:T("Fotona 4D","フォトナ4D","Fotona 4D"),
+  w:T("Fotona 4D, a laser facial in four steps.","4段階のレーザー施術フォトナ4D。","分四步的雷射療程Fotona 4D。"),q:["area"],
+  a:/fotona|포토나|フォトナ/i},
+ moxi:{norm:"tx",kr:null,ab:{},
+  n:T("Moxi (laser)","モキシ","Moxi 雷射"),
+  w:T("Moxi, a gentle fractional laser.","マイルドなフラクショナルレーザー、モキシ。","溫和的點陣雷射Moxi。"),q:["area"],
+  a:/\bmoxi\b|목시/i},
+ bbl:{kn:12,norm:"tx",kr:[319000,467500],ab:{},
+  n:T("BBL (Sciton IPL)","BBL","BBL 光子"),
+  w:T("BBL, a premium IPL light device by Sciton.","サイトン社の上位IPL機器BBL。","Sciton的高階光療BBL。"),q:["area"],
+  a:/\bbbl\b|비비엘/i},
+ geneo:{kn:3,norm:"tx",kr:[380000,440000],ab:{},
+  n:T("GeneO facial","ジェネオ","GeneO 氧氣煥膚"),
+  w:T("GeneO, an exfoliating oxygen facial.","角質ケアと酸素のフェイシャル、ジェネオ。","去角質加氧氣的GeneO護理。"),q:[],
+  a:/geneo|제네오/i},
+ hydrafacial:{kn:18,norm:"tx",kr:[385000,385000],ab:{},
+  n:T("HydraFacial","ハイドラフェイシャル","HydraFacial 水飛梭"),
+  w:T("HydraFacial, the original brand of water-suction facial. Usually priced above a basic aqua peel.","吸引式フェイシャルの元祖ブランド。一般的なアクアピールより高め。","原廠水飛梭品牌，通常比一般水飛梭貴。"),q:[],
+  a:/hydra\s*facial|하이드라|ハイドラ/i},
+ jetpeel:{norm:"tx",kr:null,ab:{},
+  n:T("JetPeel","ジェットピール","JetPeel"),
+  w:T("JetPeel, a needle-free jet infusion facial.","針を使わない噴射導入のジェットピール。","無針噴射導入的JetPeel。"),q:["product"],
+  a:/jet\s*peel|제트필|ジェットピール/i},
+ coolsculpting:{kn:9,norm:"tx",kr:[600000,840000],ab:{},
+  n:T("CoolSculpting (one cycle)","クールスカルプティング","酷塑 CoolSculpting"),
+  w:T("CoolSculpting fat freezing, priced per cycle (applicator).","脂肪冷却のクールスカルプティング。1サイクル（アプリケーター）あたり。","冷凍溶脂酷塑，以每個循環（探頭）計價。"),q:["area"],
+  a:/cool\s*sculpt|쿨스컬프팅|クールスカルプ|酷塑/i},
+ emsculpt:{kn:6,norm:"tx",kr:[680000,680000],ab:{},
+  n:T("EMSculpt NEO (one session)","エムスカルプトNEO","EMSculpt NEO"),
+  w:T("EMSculpt NEO, body muscle and fat device, priced per session.","筋肉と脂肪のボディ機器エムスカルプトNEO。1回あたり。","增肌減脂的EMSculpt NEO，以每次計價。"),q:["area"],
+  a:/emsculpt|엠스컬프|エムスカルプト/i},
  ultherapy_prime:{norm:"s100",kr:[290000,363000],ar:{gn:[326333,10],md:[330000,3],hd:[363000,4]},ab:{jp:{v:[50000],c:"JPY"},tw:{v:[7000,18000],c:"TWD"},hk:{v:[5000],c:"HKD"},us:{v:[2609],c:"USD",nt:"full"}},
   n:T("Ultherapy PRIME","ウルセラプライム","Ultherapy PRIME 音波"),
   w:T("Ultherapy PRIME, the newer Ulthera generation. Compare per 100 shots; a full face is often 300 to 400. Since March 2026 the tip can be checked as genuine by NFC.","ウルセラプライム（新世代）。100ショットあたりで比較。全顔は300〜400が多い。2026年3月からチップの正規品をNFCで確認できます。","Ultherapy PRIME（新世代）。以每100發比較，全臉常見300至400發。2026年3月起可用NFC確認探頭為正品。"),q:["tip","shots","doc"],
@@ -849,12 +960,12 @@ const REF = {
  ipl:{norm:"tx",kr:[39000,270000],ab:{jp:{v:[7800],c:"JPY"},tw:{v:[3000,8000],c:"TWD"},cn:{v:[800,3600],c:"CNY"}},
   n:T("IPL (photo facial)","IPL（フォトフェイシャル）","脈衝光 IPL"),
   w:T("IPL light treatment for redness and spots.","赤みやシミ向けの光治療IPL。","脈衝光，改善泛紅與斑點。"),q:["area"],
-  a:/\bipl\b|photo\s*facial|フォト|光子|脈衝光|脉冲光|bbl|m22|아이피엘/i},
+  a:/\bipl\b|photo\s*facial|フォト|光子|脈衝光|脉冲光|m22|아이피엘/i},
  mole:{norm:"spot",kr:[5500,110000],ab:{jp:{v:[2600],c:"JPY",nt:"per3"},tw:{v:[500,3000],c:"TWD"}},
   n:T("Mole / spot removal","ほくろ除去","點痣"),
   w:T("Mole or small spot removal, priced per spot by size.","ほくろ・小さなイボの除去。大きさにより1個ごとの価格。","點痣或小疣去除，依大小每顆計價。"),q:[],
   a:/mole|점\s*빼|점\s*제거|점치료|ほくろ|點痣|点痣|痣|wart|비립종|milia/i},
- fractional:{norm:"tx",kr:[87780,165000],ar:{hd:[132000,3]},ab:{tw:{v:[8000,20000],c:"TWD"},hk:{v:[10000],c:"HKD",nt:"face"},us:{v:[1829],c:"USD",nt:"avg"}},
+ fractional:{norm:"tx",kr:[87800,165000],ar:{hd:[132000,3]},ab:{tw:{v:[8000,20000],c:"TWD"},hk:{v:[10000],c:"HKD",nt:"face"},us:{v:[1829],c:"USD",nt:"avg"}},
   n:T("Fractional / CO2 resurfacing","フラクショナル・CO2","飛梭／CO2雷射"),
   w:T("Fractional or CO2 laser resurfacing for scars and texture; needs downtime.","傷跡・肌質用のフラクショナル／CO2レーザー。ダウンタイムあり。","飛梭或CO2雷射，改善疤痕與膚質，需恢復期。"),q:["area"],
   a:/fraxel|fractional|프락셀|프랙셔널|フラクショナル|飛梭|点阵|點陣|co2|resurfac/i},
@@ -866,20 +977,23 @@ const REF = {
   n:T("Thread lift","糸リフト","埋線拉提"),
   w:T("Thread lift with dissolvable threads. Price depends on the number and type of threads.","溶ける糸でのリフト。糸の本数と種類で価格が変わります。","可吸收線埋線拉提，價格依線的數量與種類而定。"),q:["count","product"],
   a:/thread|실\s*리프팅|실리프팅|민트실|mint|糸リフト|スレッド|埋線|线雕|線雕|pdo/i},
- contour_inj:{norm:"cc",kr:[3850,11000],ar:{gn:[6490,9],hd:[7333,8]},ab:{jp:{v:[8000],c:"JPY"},tw:{v:[3000,8000],c:"TWD",nt:"sess"}},
+ contour_inj:{norm:"cc",kr:[3800,11000],ar:{gn:[6490,9],hd:[7333,8]},ab:{jp:{v:[8000],c:"JPY"},tw:{v:[3000,8000],c:"TWD",nt:"sess"}},
   n:T("Contour / fat-dissolving injection","脂肪溶解注射","溶脂針（輪廓針）"),
   w:T("Contour or fat-dissolving injections for small fat areas, priced by amount.","小さな脂肪部位用の輪郭・脂肪溶解注射。量で価格が変わります。","小範圍脂肪用的輪廓／溶脂針，依用量計價。"),q:["cc"],
   a:/윤곽\s*주사|지방\s*분해|fat\s*dissolv|lipo\s*dissolv|kybella|脂肪溶解|溶脂|輪廓針|fatx|v-?line\s*inj/i},
  aqua_peel:{norm:"tx",kr:[38500,65000],ar:{gn:[44000,11],md:[57200,4],hd:[49500,3]},ab:{tw:{v:[3000,6000],c:"TWD",nt:"diff"},cn:{v:[50,200],c:"CNY"}},
   n:T("Aqua peel / Hydrafacial","アクアピール","水飛梭（小氣泡）"),
   w:T("Aqua peel: a cleansing facial with water suction. Simple care, not a laser.","アクアピール：吸引式の洗浄フェイシャル。レーザーではありません。","水飛梭：吸引式清潔護理，不是雷射。"),q:[],
-  a:/aqua\s*peel|아쿠아필|アクアピール|hydra\s*facial|하이드라|水飛梭|小氣泡|小气泡/i},
+  a:/aqua\s*peel|아쿠아필|アクアピール|水飛梭|小氣泡|小气泡/i},
  ldm:{norm:"tx",kr:[40000,110000],ab:{},
   n:T("LDM (ultrasound care)","LDM（超音波ケア）","LDM 水滴超音波"),
   w:T("LDM, a soothing ultrasound skin care, often added after lasers.","LDM：鎮静用の超音波ケア。レーザー後に追加されることが多い。","LDM鎮靜超音波保養，常在雷射後加做。"),q:[],
   a:/\bldm\b|엘디엠/i},
  other:{norm:null,kr:null,ab:{},n:T("Other / not in our list","その他・リスト外","其他／不在清單"),w:null,q:[]}
 };
+/* Overseas medians: full-face prices from a 13-country clinic survey (Jul–Aug 2026), converted to KRW at survey rates and to this item's unit. [KRW, clinics, d=discount/l=list] */
+const MED={"ulthera":{"tw":[399528,5,"d"],"th":[419400,11,"d"],"jp":[329833,2,"d"],"us":[509216,16,"l"],"it":[589402,10,"l"],"es":[562611,10,"l"],"uk":[624333,27,"l"],"fr":[562611,7,"l"],"ae":[580845,10,"l"],"ru":[435442,16,"l"]},"ultherapy_prime":{"tw":[720117,4,"d"],"th":[433380,13,"d"],"jp":[599000,3,"l"],"br":[284833,7,"l"],"us":[509335,16,"l"],"it":[629589,8,"l"],"es":[616193,11,"l"],"uk":[724500,19,"l"],"fr":[562610,7,"l"],"ae":[609887,5,"l"]},"shurink":{"tw":[336699,3,"d"],"th":[170851,11,"d"],"jp":[104167,9,"d"],"br":[231833,36,"l"],"it":[267642,6,"l"],"es":[321492,8,"l"],"uk":[210712,6,"l"],"fr":[241119,3,"l"],"ae":[324305,11,"l"],"ru":[173748,20,"l"]},"liftera":{"tw":[1707644,5,"l"],"th":[463637,12,"d"],"jp":[455000,6,"d"],"br":[1766000,9,"l"],"it":[1928952,3,"l"],"es":[1446714,7,"l"],"uk":[1170625,6,"l"],"fr":[803730,3,"l"],"ae":[617632,4,"l"],"ru":[868172,16,"l"]},"linearz":{"tw":[207626,2,"d"],"th":[155333,10,"d"],"jp":[108333,18,"d"],"br":[254167,9,"l"]},"sofwave":{"tw":[720117,2,"d"],"th":[1211600,7,"d"],"jp":[958500,12,"d"],"br":[1629000,1,"l"],"us":[2007728,21,"l"],"cn":[1746000,8,"d"],"it":[1808392,4,"l"],"uk":[1868318,32,"l"],"fr":[1607138,10,"l"],"ae":[2151546,8,"l"],"ru":[845344,2,"l"]},"thermage_flx":{"tw":[2787046,10,"d"],"th":[2094204,10,"d"],"jp":[3042000,4,"d"],"br":[3939000,2,"l"],"us":[2585953,15,"l"],"cn":[3424100,44,"d"],"it":[3938276,10,"l"],"es":[3697158,13,"l"],"uk":[3741318,29,"l"],"fr":[3214920,7,"l"],"ae":[3485070,9,"l"]},"thermage_unknown":{"tw":[2787046,10,"d"],"th":[2094204,10,"d"],"jp":[3042000,4,"d"],"br":[3939000,2,"l"],"us":[2585953,15,"l"],"cn":[3424100,44,"d"],"it":[3938276,10,"l"],"es":[3697158,13,"l"],"uk":[3741318,29,"l"],"fr":[3214920,7,"l"],"ae":[3485070,9,"l"]},"coolphase":{"tw":[281925,1,"l"],"th":[147481,4,"d"],"jp":[208333,1,"l"],"br":[265500,6,"l"]},"serf":{"th":[388326,9,"d"],"jp":[127833,10,"d"],"br":[550667,4,"l"],"us":[447267,19,"l"],"ae":[548576,5,"l"]},"density":{"tw":[483300,6,"l"],"th":[278823,5,"d"],"jp":[149000,10,"d"],"us":[426420,17,"l"]},"volnewmer":{"tw":[425304,6,"l"],"th":[231447,9,"d"],"jp":[183167,7,"d"],"br":[334667,9,"l"],"us":[399769,18,"l"],"es":[234421,5,"l"],"uk":[312167,3,"l"],"fr":[428656,1,"l"],"ae":[351734,6,"l"],"ru":[434371,20,"l"]},"oligio":{"tw":[332269,3,"d"],"th":[217001,10,"d"],"jp":[138667,5,"d"],"us":[224936,10,"l"],"it":[101806,5,"l"],"uk":[234125,3,"l"],"ru":[362308,20,"l"]},"oligio_x":{"tw":[350930,5,"d"],"th":[256300,10,"d"],"jp":[173667,7,"d"],"br":[360000,2,"l"],"us":[343505,8,"l"],"it":[139313,5,"l"]},"exilis":{"th":[489300,11,"d"],"jp":[199000,5,"d"],"br":[152000,4,"l"],"us":[533025,12,"l"],"cn":[349200,27,"d"],"it":[703263,4,"l"],"es":[192091,10,"l"],"uk":[655550,18,"l"],"fr":[401865,9,"l"],"ae":[352379,11,"l"],"ru":[239260,17,"l"]},"exion":{"tw":[1788210,5,"d"],"th":[507940,4,"d"],"jp":[469000,1,"d"],"us":[923910,15,"l"],"it":[884104,4,"l"],"es":[305417,8,"l"],"uk":[561900,11,"l"],"fr":[385790,7,"l"],"ru":[256350,10,"l"]},"morpheus8":{"tw":[1855872,4,"d"],"th":[908444,14,"d"],"jp":[843000,12,"d"],"br":[1372000,11,"l"],"us":[1456935,15,"l"],"cn":[2037000,8,"d"],"it":[1285968,23,"l"],"es":[884103,11,"l"],"uk":[1031150,56,"l"],"fr":[642984,18,"l"],"ae":[813957,14,"l"],"ru":[897225,24,"l"]},"genius":{"tw":[2658102,1,"l"],"us":[1421400,17,"l"],"it":[787655,4,"l"],"uk":[1165942,4,"l"],"fr":[723357,9,"l"],"ae":[1045521,5,"l"],"ru":[1110850,15,"l"]},"potenza":{"tw":[1474065,3,"d"],"th":[873587,8,"d"],"jp":[516115,7,"d"],"us":[1279260,17,"l"],"it":[723356,3,"l"],"es":[723357,9,"l"],"uk":[983325,14,"l"],"fr":[743450,7,"l"],"ae":[968075,9,"l"],"ru":[871590,12,"l"]},"secret_rf":{"jp":[625000,2,"l"],"us":[1208190,20,"l"],"it":[683170,6,"l"],"es":[715320,4,"l"],"uk":[1259593,11,"l"],"fr":[482238,3,"l"],"ae":[774460,9,"l"],"ru":[390507,14,"l"]},"sylfirm":{"tw":[1087425,5,"l"],"th":[519823,11,"d"],"jp":[271000,2,"d"],"br":[1766000,1,"l"],"us":[1419979,15,"l"],"cn":[717800,26,"d"],"it":[691208,4,"l"],"es":[530462,4,"l"],"uk":[675526,11,"l"],"fr":[562611,3,"l"],"ae":[580845,3,"l"],"ru":[598150,13,"l"]},"virtue":{"th":[601140,2,"d"],"jp":[805000,1,"d"],"br":[991000,2,"l"],"us":[1160573,16,"l"],"it":[723356,2,"l"],"uk":[1334512,5,"l"],"fr":[723357,12,"l"],"ae":[890629,5,"l"],"ru":[598150,18,"l"]},"quadessy":{"jp":[605000,2,"l"],"us":[1012748,2,"l"]},"onda":{"tw":[144180,4,"d"],"th":[66956,2,"d"],"jp":[52833,8,"d"],"us":[159908,6,"l"],"cn":[134183,15,"d"],"it":[110513,5,"l"],"uk":[109258,2,"l"],"ru":[15096,3,"l"]},"inmode":{"th":[232953,4,"d"],"jp":[172000,13,"d"],"us":[781770,6,"l"],"it":[120560,5,"l"],"uk":[280950,7,"l"],"ru":[85450,3,"l"]},"emface":{"tw":[853073,7,"d"],"th":[1933877,8,"d"],"jp":[637000,2,"d"],"br":[537000,6,"l"],"us":[1421400,19,"l"],"it":[802725,2,"l"],"es":[582704,3,"l"],"uk":[1114435,11,"l"],"fr":[787655,15,"l"],"ae":[1144265,8,"l"],"ru":[854500,10,"l"]},"titanium":{"tw":[141768,1,"d"],"th":[98705,6,"d"],"jp":[60833,11,"d"],"us":[248745,2,"l"],"cn":[134183,9,"d"],"uk":[156083,4,"l"],"ae":[130174,3,"l"],"ru":[99692,1,"l"]},"reepot":{"tw":[889272,3,"d"],"jp":[843000,1,"d"]},"fotona":{"tw":[338310,1,"d"],"th":[476415,6,"d"],"jp":[1042000,1,"d"],"br":[1144000,7,"l"],"us":[1420689,16,"l"],"cn":[869000,13,"d"],"it":[723356,5,"l"],"es":[884103,9,"l"],"uk":[1079472,18,"l"],"fr":[803730,13,"l"],"ae":[1355305,11,"l"],"ru":[717780,16,"l"]},"moxi":{"jp":[833000,2,"l"],"us":[1030515,18,"l"],"it":[884104,3,"l"],"es":[1446714,1,"l"],"uk":[936500,13,"l"],"fr":[562611,3,"l"],"ae":[1016479,9,"l"],"ru":[897225,10,"l"]},"bbl":{"th":[230670,2,"l"],"jp":[175000,7,"d"],"us":[710700,21,"l"],"cn":[349200,38,"d"],"it":[562611,5,"l"],"es":[964476,1,"l"],"uk":[842850,14,"l"],"fr":[723357,8,"l"],"ae":[658291,15,"l"],"ru":[553545,20,"l"]},"geneo":{"th":[116476,2,"l"],"jp":[175000,4,"d"],"us":[284280,15,"l"],"it":[289343,3,"l"],"es":[208970,6,"l"],"uk":[252855,13,"l"],"fr":[217007,14,"l"],"ae":[243955,13,"l"],"ru":[170900,25,"l"]},"hydrafacial":{"tw":[187907,8,"d"],"th":[267717,8,"d"],"jp":[97000,8,"d"],"br":[356000,4,"l"],"us":[282859,17,"l"],"cn":[193903,24,"d"],"it":[286128,19,"l"],"es":[241119,12,"l"],"uk":[257538,68,"l"],"fr":[289343,43,"l"],"ae":[222657,12,"l"],"ru":[131166,20,"l"]},"jetpeel":{"tw":[187907,1,"d"],"th":[21389,3,"d"],"jp":[142000,5,"d"],"us":[322658,14,"l"],"it":[340781,3,"l"],"es":[204951,10,"l"],"uk":[271585,15,"l"],"fr":[257194,16,"l"],"ae":[325273,3,"l"],"ru":[71351,14,"l"]},"coolsculpting":{"tw":[483300,5,"d"],"th":[410150,6,"d"],"jp":[297000,6,"d"],"br":[648000,6,"l"],"us":[1066050,15,"l"],"cn":[599363,22,"d"],"it":[896159,9,"l"],"es":[723357,8,"l"],"uk":[936500,30,"l"],"fr":[763544,14,"l"],"ae":[525665,8,"l"],"ru":[957040,10,"l"]},"emsculpt":{"tw":[625874,2,"d"],"th":[647740,4,"l"],"jp":[365000,6,"d"],"br":[467000,6,"l"],"us":[1208190,17,"l"],"cn":[465600,15,"d"],"it":[522425,6,"l"],"es":[450089,7,"l"],"uk":[655550,27,"l"],"fr":[482238,20,"l"],"ae":[522373,10,"l"],"ru":[427250,11,"l"]}};
+for(const k in MED){ if(!REF[k]) continue; REF[k].ab=REF[k].ab||{}; for(const c in MED[k]){ const [v,n,t]=MED[k][c]; REF[k].ab[c]={v:[v],c:"KRW",n,nt:t==="d"?"medd":"medl"}; } }
 const REF_KEYS = Object.keys(REF);
 
 /* ---------- Text parsing ---------- */
@@ -929,7 +1043,7 @@ function parseDigits(raw){
   return {v:Number(d),unc};
 }
 const FAMILY={rejuran_eye:"rejuran",rejuran_hb:"rejuran",rejuran_healer:"rejuran",ultherapy_prime:"ulthera",ulthera:"ulthera",thermage_flx:"thermage",thermage_unknown:"thermage",
- botox_masseter:"botox",skin_botox:"botox",botox_area:"botox",pico_spot:"pico",pico_toning:"pico",skinvive:"filler",laser_toning:"pico"};
+ botox_masseter:"botox",skin_botox:"botox",botox_area:"botox",pico_spot:"pico",pico_toning:"pico",skinvive:"filler",laser_toning:"pico",oligio_x:"oligio",hydrafacial:"aqua",aqua_peel:"aqua"};
 function matchCatalog(t){
   const hits=[]; for(const k of REF_KEYS){ const r=REF[k]; if(r.a && r.a.test(t)) hits.push(k); }
   if(!hits.length) return {key:"other",pkg:false};
@@ -1246,12 +1360,15 @@ function renderResult(data){
       verdict = per < ref.kr[0]*(1-tol) ? "below" : per > ref.kr[1]*(1+tol) ? "above" : "within";
     }
     if(!it.package){
+      const r1k=v=>v>=100000?Math.round(v/1000)*1000:Math.round(v/100)*100;
       for(const c of C_ORDER[lang]){
         const a=ref.ab&&ref.ab[c]; if(!a) continue;
         const krw=a.v.map(v=>v*FX[a.c]);
-        const lab=COUNTRY[c][lang]+" ("+(a.nt?NOTE[a.nt][lang]:pu)+")";
-        addFact(lab, rng([Math.round(krw[0]/1000)*1000,Math.round(krw[krw.length-1]/1000)*1000])+"  · "+fmtLocal(a.v,a.c), "abroad");
+        const lab=COUNTRY[c][lang]+" ("+(a.nt?NOTE[a.nt][lang]+", "+pu:pu)+")";
+        addFact(lab, rng([r1k(krw[0]),r1k(krw[krw.length-1])])+"  · "+(a.c==="KRW"?a.n+" "+L.clinicsWord:fmtLocal(a.v,a.c)), "abroad");
       }
+      const more=C_MORE.filter(c=>ref.ab&&ref.ab[c]).map(c=>{ const a=ref.ab[c]; return COUNTRY[c][lang]+" "+won(r1k(a.v[0]*FX[a.c]))+" ("+a.n+")"; });
+      if(more.length) addFact(L.otherCountries+" ("+pu+")", more.join(" · "), "abroad");
     }
     if(ref.ar && !it.package){
       const AN={gn:{en:"Gangnam",ja:"江南",zh:"江南"},md:{en:"Myeongdong",ja:"明洞",zh:"明洞"},hd:{en:"Hongdae",ja:"弘大",zh:"弘大"},sw:{en:"Suwon",ja:"水原",zh:"水原"}};
